@@ -8,9 +8,7 @@ import (
 )
 
 func main() {
-	request, err := http.NewRequest(
-		http.MethodGet,
-		"https://www.apple.com", nil)
+	request, err := http.NewRequest(http.MethodGet, "https://www.apple.com", nil)
 
 	request.Header.Add("User-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38")
 
