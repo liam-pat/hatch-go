@@ -34,11 +34,13 @@ func main() {
 		value := interfaceValue.Field(i).Interface()
 		fmt.Printf("field's name: %s, type: %v, value: %v\n", field.Name, field.Type, value)
 	}
+	if userName, ok := interfaceType.FieldByName("Name"); ok {
+		fmt.Println(userName)
+	}
 
 	// get functions
 	for i := 0; i < interfaceType.NumMethod(); i++ {
 		m := interfaceType.Method(i)
 		fmt.Printf("method'name: %s, type: %v\n", m.Name, m.Type)
 	}
-
 }
