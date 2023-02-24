@@ -1,48 +1,86 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
-// init the map type
-// map[keyType]valueType
 // map 打印出来可能是乱序的 ,map 只有 len 没有 cap，
 
 func main() {
-	var mapSample1 map[string]string
-	fmt.Println("init the empty mapSample1: ", mapSample1)
-	fmt.Printf("mapSample2 Length: %d \n", len(mapSample1))
-	fmt.Println("--------------------------------------------")
+	{
+		// case 1) : define new one
+		var map01 map[string]string
+		fmt.Println("map01 : ", map01)
+		fmt.Printf("map01 len : %d \n", len(map01))
 
-	fmt.Println("it also can init by make")
-	//you also can init the length by make
-	mapSample2 := make(map[string]string, 2)
-	mapSample2["firstLesson"] = "Java"
-	mapSample2["secondLesson"] = "C Plus Plus"
-	mapSample2["thirdLesson"] = "PHP"
-	fmt.Println("init the  mapSample2 by make: ", mapSample2)
-	fmt.Printf("mapSample2 length: %d \n", len(mapSample2))
-	fmt.Println("--------------------------------------------")
+		// case 2) : define new one
+		map02 := make(map[string]string, 2)
+		map02["first"] = "Java"
+		map02["second"] = "C++"
+		map02["third"] = "PHP"
+		fmt.Println("map02 : ", map02)
+		fmt.Printf("map02 len : %d \n", len(map02))
 
-	fmt.Println("print the map by for")
-	for key, value := range mapSample2 {
-		fmt.Printf("key: %s \t value: %s \n", key, value)
+		// get the all elements
+		for key, value := range map02 {
+			fmt.Printf("map02 key: %s \t value: %s \n", key, value)
+		}
+
+		// get the element
+		key := "first"
+		if value, isExist := map02[key]; isExist {
+			fmt.Printf("key = %s is existing \t value = %s \n", key, value)
+		} else {
+			fmt.Printf("key = %s is not existing \n", key)
+		}
+
+		// delete the element
+		delete(map02, key)
+		fmt.Println(map02)
 	}
-	fmt.Println("--------------------------------------------")
+	/**
+	output :
+	map01 :  map[]
+	map01 len : 0
+	map02 :  map[first:Java second:C++ third:PHP]
+	map02 len : 3
+	map02 key: first 	 value: Java
+	map02 key: second 	 value: C++
+	map02 key: third 	 value: PHP
+	key = first is existing 	 value = Java
+	map[second:C++ third:PHP]
+	*/
+	{
+		var scene sync.Map
+		scene.Store("id", 1)
+		scene.Store("name", "lily")
 
-	// mapSample2 mean
-	checkKey := "firstLesson"
-	value, isExist := mapSample2[checkKey]
+		fmt.Println(scene.Load("name"))
 
-	if isExist {
-		fmt.Printf("key = %s is exist \nvalue = %s \n", checkKey, value)
-	} else {
-		fmt.Println("the key is not exist")
+		scene.Range(func(k, v interface{}) bool {
+			fmt.Println(k, v)
+			return true
+		})
 	}
-	fmt.Println("--------------------------------------------")
 
-	// how to del the element
-	fmt.Printf("del the key => %s", checkKey)
-	delete(mapSample2, checkKey)
-	fmt.Println(mapSample2)
-	fmt.Println("--------------------------------------------")
+	{
+		newMap := make(map[string]string, 2)
+		newMap["name"] = "lily"
+		newMap["age"] = "30"
+		fmt.Println(newMap)
+		TestMapFun(newMap)
+		fmt.Println(newMap)
+		/**
+		output :
+		map[age:30 name:lily]
+		map[age:30 name:james]
+		map[age:30 name:james]
+		*/
+	}
+}
 
+func TestMapFun(m map[string]string) {
+	m["name"] = "james"
+	fmt.Println(m)
 }
