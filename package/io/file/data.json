@@ -1,0 +1,35 @@
+{
+  "unified_receipt": {
+    "pending_renewal_info": [
+      {
+        "original_transaction_id": "430000524918482",
+        "product_id": "com.viu.phone.monthly.normal.th",
+        "auto_renew_status": "1",
+        "auto_renew_product_id": "com.viu.phone.monthly.normal.th"
+      }
+    ],
+    "latest_receipt_info": [
+      {
+        "expires_date_pst": "2021-05-20 20:10:59 America\/Los_Angeles",
+        "purchase_date": "2021-04-21 03:10:59 Etc\/GMT",
+        "in_app_ownership_type": "PURCHASED",
+        "purchase_date_ms": "1618974659000",
+        "original_purchase_date_ms": "1568000690000",
+        "transaction_id": "430000827830590",
+        "original_transaction_id": "430000524918482",
+        "quantity": "1",
+        "expires_date_ms": "1621566659000",
+        "original_purchase_date_pst": "2019-09-08 20:44:50 America\/Los_Angeles",
+        "product_id": "com.viu.phone.monthly.normal.th",
+        "subscription_group_identifier": "20387660",
+        "web_order_line_item_id": "430000332606695",
+        "expires_date": "2021-05-21 03:10:59 Etc\/GMT",
+        "is_in_intro_offer_period": "false",
+        "original_purchase_date": "2019-09-09 03:44:50 Etc\/GMT",
+        "purchase_date_pst": "2021-04-20 20:10:59 America\/Los_Angeles",
+        "is_trial_period": "false"
+      }
+    ]
+  },
+  "environment": "PROD"
+}
