@@ -7,11 +7,7 @@ import (
 )
 
 func main() {
-	res, err := http.Get("http://127.0.0.1:8000")
-	if err != nil {
-		fmt.Println("http get err =", err)
-		return
-	}
+	res, _ := http.Get("http://127.0.0.1:8000")
 
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -20,9 +16,7 @@ func main() {
 		}
 	}(res.Body)
 
-	fmt.Println("status = ", res.Status)
-	fmt.Println("header = ", res.Header)
-	fmt.Println("statusCode = ", res.StatusCode)
+	fmt.Printf("status = %v \n header = %v \n statusCode = %v \n", res.Status, res.Header, res.StatusCode)
 
 	buf := make([]byte, 1024)
 	var tmp string
@@ -36,5 +30,4 @@ func main() {
 	}
 
 	fmt.Println("body = ", tmp)
-
 }

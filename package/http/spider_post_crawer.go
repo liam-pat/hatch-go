@@ -6,53 +6,43 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 func spiderPage(page int, doChan chan<- int) {
+
+	dir := "./files/"
+	_ = os.Mkdir(dir, 0775)
+
 	initUrl := "https://tieba.baidu.com/f/good?kw=%E5%87%A1%E4%BA%BA%E4%BF%AE%E4%BB%99%E4%BC%A0&ie=utf-8&cid=0"
+
 	url := fmt.Sprintf("%s&pn=%d", initUrl, (page-1)*50)
-	fmt.Printf("start to crawl page %d , url = %s\n", page, url)
+	fmt.Printf("---start goruntine to crawl page %d ----> %s\n", page, url)
 
 	pageContent, _ := getPageContent(url)
 
-	dir := "./http/down_file/"
-	_ = os.Mkdir(dir, 0775)
 	fileName := dir + strconv.Itoa(page) + ".html"
-	fileSign, err1 := os.Create(fileName)
-	if err1 != nil {
-		fmt.Println("create file error", err1)
-		return
-	}
+	file, _ := os.Create(fileName)
 
-	_, err := fileSign.Write([]byte(pageContent))
-	if err != nil {
-		fmt.Println("write to file error", err)
-		return
-	}
+	file.Write([]byte(pageContent))
 
 	doChan <- page
 }
 
 func getPageContent(url string) (content string, err error) {
-	res, err := http.Get(url)
-	if err != nil {
-		fmt.Println("http get page content error", err)
-		return
-	}
+	res, _ := http.Get(url)
 	defer func(Body io.ReadCloser) {
-		err1 := Body.Close()
-		if err1 != nil {
+		err := Body.Close()
+		if err != nil {
 			fmt.Println("close http body error", err)
 		}
 	}(res.Body)
 
 	buffer := make([]byte, 1024*4)
 	for {
-		n, err1 := res.Body.Read(buffer)
-		// maybe EOF is coming
+		n, _ := res.Body.Read(buffer)
 		if n == 0 {
-			err = err1
 			break
 		}
 		content += string(buffer[:n])
@@ -62,8 +52,8 @@ func getPageContent(url string) (content string, err error) {
 }
 
 func do(start, end int) {
-	fmt.Printf("start to crawl page %d to page %d\n", start, end)
 	doChan := make(chan int)
+
 	for page := start; page <= end; page++ {
 		go spiderPage(page, doChan)
 	}
@@ -71,9 +61,8 @@ func do(start, end int) {
 	for {
 		select {
 		case page := <-doChan:
-			fmt.Printf("page %d already finish\n", page)
+			fmt.Printf("page %d has already finished \n", page)
 		case <-time.After(10 * time.Second):
-			fmt.Println("10s go away, stop to run")
 			return
 		}
 	}
@@ -92,6 +81,8 @@ func main() {
 	if err1 != nil {
 		return
 	}
+
+	fmt.Println(strings.Repeat("#*", 20))
 
 	do(start, end)
 }
