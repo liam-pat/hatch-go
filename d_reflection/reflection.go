@@ -129,5 +129,4 @@ func main() {
 		reList := funcValue.Call(params)
 		fmt.Println(reList)
 	}
-
 }

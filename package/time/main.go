@@ -9,6 +9,11 @@ import (
 func main() {
 	{
 		nowTime := time.Now()
+
+		fmt.Println(nowTime.Unix())
+		fmt.Println(nowTime.UnixMilli())
+		fmt.Println(nowTime.UnixNano())
+
 		fmt.Println(nowTime)
 		fmt.Println(time.Time{}.Location())
 
