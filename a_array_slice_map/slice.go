@@ -20,6 +20,35 @@ append function will remove pre slice and then create new one
 
 func main() {
 	{
+		// initial
+		var s []string // do not occupy the ram ... is empty . is nil
+		fmt.Printf("var s []string: empty=%t \t nil=%t \n", len(s) == 0, s == nil)
+
+		s = []string{} // is empty , not nil
+		fmt.Printf("[]string{}: empty=%t \t nil=%t \n", len(s) == 0, s == nil)
+
+		s = []string(nil) // do not occupy the ram ... is empty . is nil
+		fmt.Printf("[]string(nil): empty=%t \t nil=%t \n", len(s) == 0, s == nil)
+
+		s = make([]string, 0) // is empty , not nil
+		fmt.Printf("make([]string, 0): empty=%t \t nil=%t \n", len(s) == 0, s == nil)
+
+		fmt.Println()
+	}
+	{
+		// COPY
+		//1)
+		src := []int{0, 1, 2}
+		dst := make([]int, len(src))
+		copy(dst, src)
+		fmt.Println(dst)
+		//2)
+		src = []int{0, 1, 2}
+		dst = append([]int(nil), src...)
+
+		fmt.Println()
+	}
+	{
 		array := [...]int{10, 23, 44, 55, 66}
 		slice := array[1:4:5]
 
@@ -63,24 +92,24 @@ func main() {
 	}
 
 	/**
-	output:
-	slice :  [23 44 55]
-	slice length :  3
-	slice cap :  4
-	after appending , slice:  [23 44 55 1]
-	slice2:  [44 55 777]
-	slice:  [23 44 55 777]
-	original cap : 1  	 new cap: 2
-	original cap : 2  	 new cap: 4
-	original cap : 4  	 new cap: 8
-	original cap : 8  	 new cap: 16
-	original cap : 16  	 new cap: 32
-	copy result :  [1 2 6 6 6 6]
-	fun p 0x1400012e000
-	fun p 0x140001240c0
-	[0 0 0 1 2 3 4 5]
-	main p 0x1400012e000
-	[0 0 0]
+	  output:
+	  slice :  [23 44 55]
+	  slice length :  3
+	  slice cap :  4
+	  after appending , slice:  [23 44 55 1]
+	  slice2:  [44 55 777]
+	  slice:  [23 44 55 777]
+	  original cap : 1  	 new cap: 2
+	  original cap : 2  	 new cap: 4
+	  original cap : 4  	 new cap: 8
+	  original cap : 8  	 new cap: 16
+	  original cap : 16  	 new cap: 32
+	  copy result :  [1 2 6 6 6 6]
+	  fun p 0x1400012e000
+	  fun p 0x140001240c0
+	  [0 0 0 1 2 3 4 5]
+	  main p 0x1400012e000
+	  [0 0 0]
 	*/
 }
 
