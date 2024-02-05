@@ -42,7 +42,7 @@ func consumer(ch <-chan int) {
 		fmt.Println("Receive:", <-ch)
 
 		time.Sleep(time.Second * 1)
-		
+
 		cond.L.Unlock()
 		cond.Signal()
 	}
