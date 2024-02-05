@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -50,12 +49,6 @@ func main() {
 		fmt.Println("dir : ", path.Dir(sourceFilepath))
 		fmt.Println("file name : ", path.Base(sourceFilepath))
 		fmt.Println("file ext : ", path.Ext(sourceFilepath))
-	}
-	{
-		// filepath package
-		sourceFilepath := dir + "/source.txt"
-		fmt.Println("abs : ", any(filepath.Abs(sourceFilepath)))
-
 	}
 
 	{
