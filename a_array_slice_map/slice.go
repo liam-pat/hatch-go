@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"sort"
+	"time"
+)
 
 /**
 arr := [...]int{10,23,44,55,66}
@@ -83,39 +88,143 @@ func main() {
 		copy(slice02, slice01)
 		fmt.Println("copy result : ", slice02)
 	}
+
 	{
-		slice := make([]int, 3)
-		// clone new one into fun
-		TestSlicePass(slice)
-		fmt.Printf("main p %p \n", slice) // still the s1 , cap and len also equal 3
-		fmt.Println(slice)                // [ 0 0 0]
+
+		// array
+		{
+			var numbers [5]int
+			fmt.Printf("num array : %#v\n", numbers)
+			fmt.Printf("len(nums) : %d\n", len(numbers))
+		}
+		{
+			var nums []int
+			fmt.Printf("nums slice: %#v\n", nums)
+			fmt.Printf("len(nums) : %d\n", len(nums))
+		}
+		{
+			var array [2]int
+			var slice []int
+			fmt.Println("slice == nil?", slice == nil)
+			fmt.Println("len(slice)  :", len(slice))
+			fmt.Printf("array's type: %T\n", array)
+			fmt.Printf("slice's type: %T\n", slice)
+			rand.Seed(time.Now().UnixNano())
+			fmt.Println("--------------")
+		}
+		{
+			// get the unique integer by range
+			const max = 5
+			var uniques [max]int
+
+		loop:
+			for found := 0; found < max; {
+				n := rand.Intn(max) + 1
+				fmt.Print(n, " ")
+
+				for _, u := range uniques {
+					if u == n {
+						continue loop
+					}
+				}
+
+				uniques[found] = n
+				found++
+			}
+
+			fmt.Println("\n\n uniques:", uniques)
+			fmt.Println("--------------")
+		}
+		{
+			rand.Seed(time.Now().UnixNano())
+			max := 5
+			var uniques []int
+
+		loop2:
+			// you can still use the len function on a nil slice
+			for len(uniques) < max {
+				n := rand.Intn(max) + 1
+				fmt.Print(n, " ")
+
+				for _, u := range uniques {
+					if u == n {
+						continue loop2
+					}
+				}
+
+				uniques = append(uniques, n)
+			}
+
+			fmt.Println("\n\nuniques:", uniques)
+			fmt.Println("\nlength of uniques:", len(uniques))
+
+			sort.Ints(uniques)
+			fmt.Println("\nsorted:", uniques)
+
+			// convert to slice to use some function
+			nums := [5]int{5, 4, 3, 2, 1}
+			fmt.Println("\nnums:", nums)
+			fmt.Println("\n num[1:2]:", nums[1:2])
+			fmt.Println("\n num[1:4]:", nums[0:4])
+
+			sort.Ints(nums[:])
+
+			fmt.Println("--------------")
+
+		}
+		{
+			agesArray := [3]int{35, 15, 25}
+			ages := agesArray[0:3]
+
+			ages[0] = 100
+			ages[2] = 50
+
+			fmt.Printf("agesArray type : %T , %[1]v\n", agesArray[:])
+			fmt.Printf("agesArray's ages type : %T, %[1]v\n", ages)
+		}
+		// function
+		{
+			fmt.Println(make([]int, 3, 5))
+			evens := []int{2, 4}
+			odds := []int{3, 5, 7}
+
+			fmt.Println("evens [before]", evens)
+			fmt.Println("odds  [before]", odds)
+
+			N := copy(evens, odds)
+			fmt.Printf("%d element(s) are copied.\n", N)
+
+			fmt.Println("evens [after]", evens)
+			fmt.Println("odds  [after]", odds)
+
+		}
+		{
+			scores := []int{1, 2, 3, 4, 5}
+			cloneScores := make([]int, 4)
+
+			copy(cloneScores, scores[:len(scores)-2])
+			fmt.Println(cloneScores) // [1,2,3, 0]
+		}
+
+		/**
+		  output:
+		  slice :  [23 44 55]
+		  slice length :  3
+		  slice cap :  4
+		  after appending , slice:  [23 44 55 1]
+		  slice2:  [44 55 777]
+		  slice:  [23 44 55 777]
+		  original cap : 1  	 new cap: 2
+		  original cap : 2  	 new cap: 4
+		  original cap : 4  	 new cap: 8
+		  original cap : 8  	 new cap: 16
+		  original cap : 16  	 new cap: 32
+		  copy result :  [1 2 6 6 6 6]
+		  fun p 0x1400012e000
+		  fun p 0x140001240c0
+		  [0 0 0 1 2 3 4 5]
+		  main p 0x1400012e000
+		  [0 0 0]
+		*/
 	}
-
-	/**
-	  output:
-	  slice :  [23 44 55]
-	  slice length :  3
-	  slice cap :  4
-	  after appending , slice:  [23 44 55 1]
-	  slice2:  [44 55 777]
-	  slice:  [23 44 55 777]
-	  original cap : 1  	 new cap: 2
-	  original cap : 2  	 new cap: 4
-	  original cap : 4  	 new cap: 8
-	  original cap : 8  	 new cap: 16
-	  original cap : 16  	 new cap: 32
-	  copy result :  [1 2 6 6 6 6]
-	  fun p 0x1400012e000
-	  fun p 0x140001240c0
-	  [0 0 0 1 2 3 4 5]
-	  main p 0x1400012e000
-	  [0 0 0]
-	*/
-}
-
-func TestSlicePass(slice []int) {
-	fmt.Printf("fun p %p \n", slice) // as same as main
-	slice = append(slice, 1, 2, 3, 4, 5)
-	fmt.Printf("fun p %p \n", slice) // over , it will add the cap auto
-	fmt.Println(slice)               // [0 0 0 1 2 3 4 5]
 }

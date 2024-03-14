@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"os"
+	"time"
+)
 
 // will clone new one
 func modify1(p [5]int) {
@@ -70,4 +75,70 @@ func main() {
 		array_slice_map[3] address : 0x14000122004
 		*/
 	}
+	{
+		fmt.Println("#################")
+		var books [4]string
+
+		books[0] = "Kafka's Revenge"
+		books[1] = "Stay Golden"
+		books[2] = "Everything"
+		books[3] += books[0] + " 2nd Edition"
+		//%#v include the array type
+		fmt.Printf("books  : %#v\n", books)
+	}
+	{
+		fmt.Println("#################")
+		books := [...]string{
+			"Kafka's Revenge",
+			"Stay Golden",
+			"Everything",
+			"Kafka's Revenge 2nd Edition",
+		}
+		fmt.Printf("books : %#v\n", books)
+	}
+	// output the emoji in random
+	{
+		fmt.Println("#################")
+		args := os.Args[1:]
+
+		var name string
+		if len(args) != 1 {
+			name = "test"
+		} else {
+			name = "test"
+		}
+		moods := [...]string{"happy 😀", "good 👍", "awesome 😎", "sad 😞", "bad 👎", "terrible 😩"}
+
+		rand.Seed(time.Now().UnixNano())
+		n := rand.Intn(len(moods))
+
+		fmt.Printf("%s feels %s\n", name, moods[n])
+	}
+	{
+		type placeholder [5]string
+		zero := placeholder{
+			"███",
+			"█ █",
+			"█ █",
+			"█ █",
+			"███",
+		}
+
+		one := placeholder{
+			"██ ",
+			" █ ",
+			" █ ",
+			" █ ",
+			"███",
+		}
+		digits := [...]placeholder{zero, one}
+
+		for line := range digits[0] {
+			for digit := range digits {
+				fmt.Print(digits[digit][line], "  ")
+			}
+			fmt.Println()
+		}
+	}
+
 }
