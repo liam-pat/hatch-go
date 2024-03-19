@@ -10,7 +10,6 @@ func main() {
 	{
 		c1 := make(chan string, 1)
 		c2 := make(chan string, 1)
-
 		go func() {
 			time.Sleep(2 * time.Second)
 			c1 <- "result 1"
@@ -51,29 +50,29 @@ func main() {
 		}()
 		for i := 0; i < 8; i++ {
 			ch <- i
-			time.Sleep(2 * time.Second)
+			time.Sleep(time.Second)
 		}
 		<-quit
 		fmt.Println(strings.Repeat("*#", 30))
 	}
 	{
-		// sample : 3 ways to await
+		// 3 ways to wait
 		way1 := func() {
 			time.Sleep(1 * time.Second)
 			fmt.Println("-- way1 done")
 		}
 		way2 := func() {
 			timer := time.NewTimer(1 * time.Second)
-			<-timer.C
-			fmt.Println("-- way2 done")
+
+			fmt.Println("-- way2 done ", <-timer.C)
 		}
 		way3 := func() {
-			<-time.After(1 * time.Second)
-			fmt.Println("-- way3 done")
+			fmt.Println("-- way3 done", <-time.After(time.Second))
 		}
 		way1()
 		way2()
 		way3()
+
 		fmt.Println(strings.Repeat("*#", 30))
 	}
 }

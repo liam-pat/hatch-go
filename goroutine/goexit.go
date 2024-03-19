@@ -3,24 +3,38 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"strings"
+	"time"
 )
 
-func testDefer() {
-	defer fmt.Println("C")
-	//return
-	// 终止函数，所在的子协程还会继续执行，B 还是会输出
-
-	runtime.Goexit() // 终止函数所在的协程，B 不会再输出了
-	fmt.Println("D")
-}
-
 func main() {
+	{
+		go func() {
+			fmt.Println("goroutine A")
+			func() {
+				defer fmt.Println("goroutine defer C")
+				runtime.Goexit() // exit immediately
+				fmt.Println("goroutine D")
+			}()
 
-	go func() {
-		fmt.Println("A")
-		testDefer()
-		fmt.Println("B")
-	}()
+			fmt.Println("goroutine B")
+		}()
 
-	select {}
+		time.Sleep(time.Millisecond)
+		fmt.Println(strings.Repeat("##", 20))
+	}
+	{
+		for i := 1; i <= 5; i++ {
+			defer fmt.Println("defer ", i)
+
+			go func(i int) {
+				if i == 3 {
+					runtime.Goexit()
+				}
+				fmt.Println(i)
+			}(i)
+		}
+		time.Sleep(time.Second)
+		fmt.Println(strings.Repeat("##", 20))
+	}
 }
