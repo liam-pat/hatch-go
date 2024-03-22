@@ -1,4 +1,4 @@
-module packie/go-reborn
+module packie/hatch-go
 
 go 1.21
 

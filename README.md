@@ -1,5 +1,13 @@
 # Purpose
+
 > Get more familiar with using GoLand.
+
+# GoLang execution order
+
+* `main.go` to start and then generate the lookup structure tree
+* initialize the tree step by step
+* In the initialization of a single package, constants are initialized first, followed by global variables, finally, the
+  package's init function is executed.
 
 # Test Case
 
