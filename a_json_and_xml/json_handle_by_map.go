@@ -8,27 +8,25 @@ import (
 func main() {
 	{
 		data := make(map[string]interface{}, 4)
-
-		data["company"] = "pccw"
-		data["name"] = "packie"
+		data["company"] = "ibm"
+		data["name"] = "liam"
 		data["price"] = "111111"
 		data["detail"] = []string{"boy", "26"}
 
-		buf, err := json.Marshal(data)
-
-		if err != nil {
+		if buf, err := json.Marshal(data); err != nil {
 			fmt.Println("err = ", err)
 			return
+		} else {
+			fmt.Println("format json :", string(buf))
 		}
-		fmt.Println("format json :", string(buf))
 	}
-	{
-		jsonStr := ` {"company":"pccw","detail":["boy","26"],"name":"packie","price":"111111"}`
-		m := make(map[string]interface{}, 4)
-		err := json.Unmarshal([]byte(jsonStr), &m)
 
-		if err != nil {
+	{
+		jsonStr := ` {"company":"ibm","detail":["boy","26"],"name":"liam","price":"111111"}`
+		m := make(map[string]interface{}, 4)
+		if err := json.Unmarshal([]byte(jsonStr), &m); err != nil {
 			fmt.Println("err", err)
+			return
 		}
 
 		fmt.Printf("m = %+v\n", m)

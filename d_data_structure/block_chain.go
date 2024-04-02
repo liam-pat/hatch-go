@@ -30,7 +30,7 @@ func (thisBlock *block) setHash() *block {
 	return thisBlock
 }
 
-//create a new block
+// create a new block
 func newBlock(data string, PrevBlockHash []byte) *block {
 	newBlock := block{}
 	newBlock.Data = []byte(data)
