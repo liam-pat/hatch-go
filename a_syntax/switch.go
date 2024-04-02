@@ -20,7 +20,7 @@ func main() {
 		fmt.Printf("num: %d \n", num)
 
 	default:
-		fmt.Println("do not have something to match");
+		fmt.Println("do not have something to match")
 	}
 
 	//you also can use that
