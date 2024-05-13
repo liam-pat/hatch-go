@@ -10,10 +10,7 @@ import (
 	"fmt"
 )
 
-/*
-*
-Hash-based Message Authentication Code
-*/
+// Hash-based Message Authentication Code
 func main() {
 
 	fmt.Printf("hamc md5  encode value `%s`=> `%s` \n", "test_01", hmacWithMD5ToStr("test_01", "secret_key"))

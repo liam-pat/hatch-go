@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// Advanced Encryption Standard
+// (Advanced Encryption Standard)
 // @todo, study 3 method 's different
 func main() {
 

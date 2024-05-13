@@ -2,70 +2,53 @@ package main
 
 import (
 	"bytes"
+	"crypto/cipher"
 	"crypto/des"
 	"encoding/hex"
-	"errors"
-	"fmt"
+	"github.com/forgoer/openssl"
+	"log"
 )
 
+// (Data Encryption Standard) Can be brute-forced
+
+// key len: 8 byte (56 bit actually)
+// if scr len > 64 bit , need to encrypt many times
 func main() {
-	key := []byte("2fa6c1e9")
-	str := "I love this beautiful world!"
 
-	strEncrypted, _ := encrypt(str, key)
-	fmt.Println("Encrypted:", strEncrypted)
+	src := []byte("test the des cbc encryption")
+	key := []byte("12345678"[:8])
+	iv := []byte("43218765"[:8])
+	dst := desCBSEncrypt(src, key, iv)
+	decryptedStr, _ := openssl.DesCBCDecrypt(dst, key, iv, openssl.PKCS5_PADDING)
 
-	strDecrypted, _ := decrypt(strEncrypted, key)
-	fmt.Println("Decrypted:", strDecrypted)
+	log.Printf("`%s` encrypted hex `%v` \n", src, string(dst))
+	log.Printf("`%s` encrypted hex to str `%v` \n", src, hex.EncodeToString(dst))
+	log.Printf("`%s` decrypted `%v` \n", string(dst), string(decryptedStr))
+
+	// 3 times DES CBC , key must be 24 byte
+	src = []byte("3 DES CBC encryption")
+	key = []byte("1234567812345678123456781234567812345678"[:24])
+
+	dst, _ = openssl.Des3ECBEncrypt(src, key, openssl.ZEROS_PADDING)
+	decryptedStr, _ = openssl.Des3ECBDecrypt(dst, key, openssl.ZEROS_PADDING)
+
+	log.Printf("`%s` encrypted `%s` \n", src, string(dst))
+	log.Printf("`%s` encrypted hex 2 str `%v` \n", src, hex.EncodeToString(dst))
+	log.Printf("`%s` decrypt 2 str `%v` \n", string(dst), string(decryptedStr))
 }
 
-func decrypt(decrypted string, key []byte) (string, error) {
-	src, err := hex.DecodeString(decrypted)
-	if err != nil {
-		return "", err
-	}
-	block, err := des.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-	out := make([]byte, len(src))
-	dst := out
-	bs := block.BlockSize()
-	if len(src)%bs != 0 {
-		return "", errors.New("crypto/cipher: input not full blocks")
-	}
-	for len(src) > 0 {
-		block.Decrypt(dst, src[:bs])
-		src = src[bs:]
-		dst = dst[bs:]
-	}
-	out = ZeroUnPadding(out)
-	return string(out), nil
-}
-
-func encrypt(str string, key []byte) (string, error) {
-	byteStr := []byte(str)
-
+func desCBSEncrypt(src, key, iv []byte) []byte {
 	block, _ := des.NewCipher(key)
 	blockSize := block.BlockSize()
 
-	padding := blockSize - len(byteStr)%blockSize
-	padBytes := bytes.Repeat([]byte{0}, padding)
-	byteStr = append(byteStr, padBytes...)
+	need2padLen := blockSize - len(src)%blockSize
 
-	emptyStr := make([]byte, len(byteStr))
-	dst := emptyStr
+	padStr := bytes.Repeat([]byte{byte(need2padLen)}, need2padLen)
+	str := append(src, padStr...)
 
-	for len(byteStr) > 0 {
-		block.Encrypt(dst, byteStr[:blockSize])
-		byteStr = byteStr[blockSize:]
-		dst = dst[blockSize:]
-	}
-	return hex.EncodeToString(emptyStr), nil
-}
+	dst := make([]byte, len(str))
 
-func ZeroUnPadding(origData []byte) []byte {
-	return bytes.TrimFunc(origData, func(r rune) bool {
-		return r == rune(0)
-	})
+	blockMode := cipher.NewCBCEncrypter(block, iv)
+	blockMode.CryptBlocks(dst, str)
+	return dst
 }

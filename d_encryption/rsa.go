@@ -4,71 +4,83 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
-	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
-	"errors"
-	"fmt"
+	"log"
+	"os"
+	"strings"
 )
 
-// openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
-
-var privateKey = []byte(`
------BEGIN RSA PRIVATE KEY-----
-MIICWwIBAAKBgQDcGsUIIAINHfRTdMmgGwLrjzfMNSrtgIf4EGsNaYwmC1GjF/bM
-h0Mcm10oLhNrKNYCTTQVGGIxuc5heKd1gOzb7bdTnCDPPZ7oV7p1B9Pud+6zPaco
-qDz2M24vHFWYY2FbIIJh8fHhKcfXNXOLovdVBE7Zy682X1+R1lRK8D+vmQIDAQAB
-AoGAeWAZvz1HZExca5k/hpbeqV+0+VtobMgwMs96+U53BpO/VRzl8Cu3CpNyb7HY
-64L9YQ+J5QgpPhqkgIO0dMu/0RIXsmhvr2gcxmKObcqT3JQ6S4rjHTln49I2sYTz
-7JEH4TcplKjSjHyq5MhHfA+CV2/AB2BO6G8limu7SheXuvECQQDwOpZrZDeTOOBk
-z1vercawd+J9ll/FZYttnrWYTI1sSF1sNfZ7dUXPyYPQFZ0LQ1bhZGmWBZ6a6wd9
-R+PKlmJvAkEA6o32c/WEXxW2zeh18sOO4wqUiBYq3L3hFObhcsUAY8jfykQefW8q
-yPuuL02jLIajFWd0itjvIrzWnVmoUuXydwJAXGLrvllIVkIlah+lATprkypH3Gyc
-YFnxCTNkOzIVoXMjGp6WMFylgIfLPZdSUiaPnxby1FNM7987fh7Lp/m12QJAK9iL
-2JNtwkSR3p305oOuAz0oFORn8MnB+KFMRaMT9pNHWk0vke0lB1sc7ZTKyvkEJW0o
-eQgic9DvIYzwDUcU8wJAIkKROzuzLi9AvLnLUrSdI6998lmeYO9x7pwZPukz3era
-zncjRK3pbVkv0KrKfczuJiRlZ7dUzVO0b6QJr8TRAA==
------END RSA PRIVATE KEY-----
-`)
-
-var publicKey = []byte(`
------BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcGsUIIAINHfRTdMmgGwLrjzfM
-NSrtgIf4EGsNaYwmC1GjF/bMh0Mcm10oLhNrKNYCTTQVGGIxuc5heKd1gOzb7bdT
-nCDPPZ7oV7p1B9Pud+6zPacoqDz2M24vHFWYY2FbIIJh8fHhKcfXNXOLovdVBE7Z
-y682X1+R1lRK8D+vmQIDAQAB
------END PUBLIC KEY-----
-`)
-
-func rsaEncrypt(data []byte) ([]byte, error) {
-	block, _ := pem.Decode(publicKey)
-	if block == nil {
-		return nil, errors.New("public key error")
-	}
-	anyType, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	pub := anyType.(*rsa.PublicKey)
-	return rsa.EncryptPKCS1v15(rand.Reader, pub, data)
-}
-
-func rsaDecrypt(ciphertext []byte) ([]byte, error) {
-	block, _ := pem.Decode(privateKey)
-
-	if block == nil {
-		return nil, errors.New("private key error!")
-	}
-	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-
-	if err != nil {
-		return nil, err
-	}
-	return rsa.DecryptPKCS1v15(rand.Reader, privateKey, ciphertext)
-}
 func main() {
-	data, _ := rsaEncrypt([]byte("hello world"))
 
-	fmt.Println("encrypted string: ", base64.StdEncoding.EncodeToString(data))
-	origData, _ := rsaDecrypt(data)
-	fmt.Println("decrypted string: ", string(origData))
+	str, _ := os.Getwd()
+
+	genRSAKey(1024, str+"/tmp")
+	privateKey, publicKey := getRSA(str + "/tmp")
+
+	privateBlock, _ := pem.Decode(privateKey)
+	publicBlock, _ := pem.Decode(publicKey)
+
+	anyPrivateKey, _ := x509.ParsePKCS8PrivateKey(privateBlock.Bytes)
+	anyPublicKey, _ := x509.ParsePKIXPublicKey(publicBlock.Bytes)
+
+	json := "for testing the RSA encryption"
+	dst := rsaEncrypt([]byte(json), anyPublicKey)
+	decryptedStr := rsaDecrypt(dst, anyPrivateKey)
+
+	log.Printf(" `%s` encrypted 2 hex string `%s`\n", json, hex.EncodeToString(dst))
+	log.Printf(strings.Repeat("##", 50))
+	log.Printf(" `%s` decrypted 2 `%s`\n", hex.EncodeToString(dst), string(decryptedStr))
+
+}
+
+func genRSAKey(bits int, dir string) {
+	privateKey, _ := rsa.GenerateKey(rand.Reader, bits)
+	publicKey := privateKey.PublicKey
+
+	// most popular ways : PKCS1 and PKCS8
+	X509PrivateKey, _ := x509.MarshalPKCS8PrivateKey(privateKey)
+	X509PublicKey, _ := x509.MarshalPKIXPublicKey(&publicKey)
+
+	privateKeyFile, _ := os.Create(dir + "/private.pem")
+	publicKeyFile, _ := os.Create(dir + "/public.pem")
+
+	defer func(privateKeyFile *os.File) { privateKeyFile.Close() }(privateKeyFile)
+	defer func(publicKeyFile *os.File) { publicKeyFile.Close() }(publicKeyFile)
+
+	privateBlock := pem.Block{Type: "PRIVATE KEY", Bytes: X509PrivateKey}
+	publicBlock := pem.Block{Type: "Public Key", Bytes: X509PublicKey}
+
+	_ = pem.Encode(privateKeyFile, &privateBlock)
+	_ = pem.Encode(publicKeyFile, &publicBlock)
+}
+
+func getRSA(dir string) (privateKeyStr, publicKeyStr []byte) {
+	privateKeyFile, _ := os.Open(dir + "/private.pem")
+	publicKeyFile, _ := os.Open(dir + "/public.pem")
+
+	defer func(privateKeyFile *os.File) { privateKeyFile.Close() }(privateKeyFile)
+	defer func(publicKeyFile *os.File) { publicKeyFile.Close() }(publicKeyFile)
+
+	privateInfo, _ := privateKeyFile.Stat()
+	publicInfo, _ := publicKeyFile.Stat()
+
+	privateBuf := make([]byte, privateInfo.Size())
+	publicBuf := make([]byte, publicInfo.Size())
+
+	_, _ = privateKeyFile.Read(privateBuf)
+	_, _ = publicKeyFile.Read(publicBuf)
+
+	return privateBuf, publicBuf
+}
+
+func rsaEncrypt(src []byte, anyPublicKey any) (dst []byte) {
+	dst, _ = rsa.EncryptPKCS1v15(rand.Reader, anyPublicKey.(*rsa.PublicKey), src)
+
+	return
+}
+
+func rsaDecrypt(dst []byte, anyPrivateKey any) (src []byte) {
+	src, _ = rsa.DecryptPKCS1v15(rand.Reader, anyPrivateKey.(*rsa.PrivateKey), dst)
+	return
 }
