@@ -22,7 +22,7 @@ func main() {
 	}
 
 	{
-		jsonStr := ` {"company":"ibm","detail":["boy","26"],"name":"liam","price":"111111"}`
+		jsonStr := `{"company":"ibm","detail":["boy","26"],"name":"liam","price":"111111"}`
 		m := make(map[string]interface{}, 4)
 		if err := json.Unmarshal([]byte(jsonStr), &m); err != nil {
 			fmt.Println("err", err)

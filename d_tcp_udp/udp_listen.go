@@ -42,5 +42,4 @@ func handleClient(conn *net.UDPConn) {
 
 	conn.WriteToUDP([]byte("server datetime: "+daytime+"\n"), addr)
 	conn.WriteToUDP([]byte("content: "+string(buf[0:])+"\n"), addr)
-
 }
