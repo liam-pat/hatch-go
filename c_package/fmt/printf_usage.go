@@ -16,45 +16,34 @@ func main() {
 
 	name, sex = "Alan", "man"
 	fmt.Println(name, sex)
-
 	name, sex = sex, name
 	fmt.Println(name, sex)
+	fmt.Println(int16(1000) + int16(int8(127)))
 
 	var orange int32 = 65 // 65 is A
-	color := string(orange)
-	fmt.Println(color)
+	fmt.Printf("int: %d 2str: %s\n", orange, string(orange))
 
 	fmt.Println(string([]byte{104, 105}))
 
-	min := int8(127)
-	max := int16(1000)
-	fmt.Println(max + int16(min))
+	fmt.Println("---------Binary")
+	fmt.Printf("%b\n", 2)
 
-	fmt.Println("---------bit")
-	fmt.Printf("%b\n", 0)
-	fmt.Printf("%b\n", 1)
+	fmt.Printf("%04b = %[1]d\n", 8)
+	fmt.Printf("%04b = %[1]d\n", 4)
+	fmt.Printf("%04b = %[1]d\n", 2)
+	fmt.Printf("%04b = %[1]d\n", 10)
+	fmt.Printf("%04b = %[1]d\n", 16)
 
-	fmt.Println("---------bit")
-	fmt.Printf("%02b = %d\n", 0, 0)
-	fmt.Printf("%02b = %d\n", 1, 1)
-	fmt.Printf("%02b = %d\n", 2, 2)
-	fmt.Printf("%02b = %d\n", 3, 3)
-
-	fmt.Println("---------bit")
-	fmt.Printf("%08b = %d\n", 1, 1)
-	fmt.Printf("%08b = %d\n", 2, 2)
-	fmt.Printf("%08b = %d\n", 4, 4)
-	fmt.Printf("%08b = %d\n", 8, 8)
-	fmt.Printf("%08b = %d\n", 16, 16)
-	fmt.Printf("%08b = %d\n", 32, 32)
-	fmt.Printf("%08b = %d\n", 64, 64)
-	fmt.Printf("%08b = %d\n", 128, 128)
+	fmt.Printf("%08b = %[1]d\n", 16)
+	fmt.Printf("%08b = %[1]d\n", 32)
+	fmt.Printf("%08b = %[1]d\n", 64)
+	fmt.Printf("%08b = %[1]d\n", 128)
 
 	fmt.Println("---------Binary To Decimal")
 	i, _ := strconv.ParseInt("00000010", 2, 64)
-	fmt.Println(i)
+	fmt.Printf("type = %T, value = %[1]v\n", i)
 	i, _ = strconv.ParseInt("00010110", 2, 64)
-	fmt.Println(i)
+	fmt.Printf("type = %T, value = %[1]v\n ", i)
 
 	fmt.Println("---------The Max Range")
 	fmt.Println("int8  Range :", math.MinInt8, math.MaxInt8)
@@ -68,18 +57,11 @@ func main() {
 	fmt.Println("uint64 Range :", 0, uint64(math.MaxUint64))
 
 	fmt.Println("---------Binary Decimal Map")
-	big := uint16(65535)
-	small := uint8(big)
-	fmt.Printf("%016b %[1]d\n", big)
-	fmt.Printf("%016b %[1]d\n", small)
+	fmt.Printf("%016b %[1]d\n", uint16(65535))
 
 	fmt.Println("---------Parse The Time")
 	h, _ := time.ParseDuration("4h30m")
 	fmt.Println(h.Hours(), "hours")
-	var m int64 = 2
-	h *= time.Duration(m)
+	h *= time.Duration(2)
 	fmt.Println(h)
-
-	fmt.Printf("Type of h: %T\n", h)
-	fmt.Printf("Type of h's underlying type: %T\n", int64(h))
 }
