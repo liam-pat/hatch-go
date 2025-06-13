@@ -23,19 +23,21 @@ func main() {
 		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
-		// set the timeout
+		// ticker vs timer
 		ticker := time.NewTicker(time.Millisecond * 500)
+		defer ticker.Stop()
+
 		stopper := time.NewTimer(time.Second * 2)
 
 		var i int
 		for {
 			select {
 			case <-stopper.C:
-				fmt.Println(">>>>>>no time la, need to  stop")
+				fmt.Println("timer")
 				return
 			case <-ticker.C:
 				i++
-				fmt.Println("tick times : ", i)
+				fmt.Println("ticker", i)
 			}
 		}
 	}

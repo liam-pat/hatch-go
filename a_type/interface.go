@@ -6,7 +6,7 @@ type Human interface {
 	sayHello()
 }
 
-type OldMan struct {
+type older struct {
 	number int
 	name   string
 	age    int
@@ -18,39 +18,32 @@ type younger struct {
 	age    int
 }
 
-type SomeOne string
+type someOne string
 
-func (tmp OldMan) sayHello() {
-	fmt.Printf("I am a old man, name = %s 、 age = %d 、name = %s \n", tmp.name, tmp.age, tmp.name)
+func (tmp older) sayHello() {
+	fmt.Printf("older, name = %s | age = %d \n", tmp.name, tmp.age)
 }
 
 func (tmp younger) sayHello() {
-	fmt.Printf("I am a younger, name = %s 、 age = %d 、name = %s \n", tmp.name, tmp.age, tmp.name)
+	fmt.Printf("younger, name = %s | age = %d \n", tmp.name, tmp.age)
 }
 
-func (tmp SomeOne) sayHello() {
-	fmt.Printf("I just a stranger\n")
-}
-
-func whoSayHello(tmp Human)  {
-	tmp.sayHello()
+func (tmp someOne) sayHello() {
+	fmt.Printf("stranger, name = %s \n", tmp)
 }
 
 func main() {
 	var human Human
 
-	oldManObjAddress := &OldMan{1, "old man", 67}
-	human = oldManObjAddress
+	o := &older{1, "older", 67}
+	human = o
 	human.sayHello()
 
-	youngerObj := younger{2, "younger", 21}
-	human = &youngerObj
+	y := younger{2, "younger", 21}
+	human = &y
 	human.sayHello()
 
-	strangerAddress := SomeOne("strange")
+	strangerAddress := someOne("strange")
 	human = &strangerAddress
 	human.sayHello()
-
-	testOldMan := OldMan{3,"test old man",88}
-	whoSayHello(testOldMan)
 }
