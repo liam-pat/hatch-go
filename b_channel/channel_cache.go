@@ -9,29 +9,32 @@ import (
 func main() {
 	{
 		messages := make(chan string, 2)
-		messages <- "buffered 01"
-		messages <- "buffered 01"
-		fmt.Println("string 1 : ", <-messages)
-		fmt.Println("string 2 : ", <-messages)
-		fmt.Println(strings.Repeat("##", 20))
+		messages <- "buffered1"
+		messages <- "buffered2"
+		fmt.Println("string1 : ", <-messages)
+		fmt.Println("string2 : ", <-messages)
+
+		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
 		messages := make(chan string, 2)
 		go func(channel chan<- string, msg string) {
 			channel <- msg
 		}(messages, "message")
-		fmt.Println(<-messages)
-		fmt.Println(strings.Repeat("##", 20))
+
+		fmt.Printf("output message: %s\n", <-messages)
+
+		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
-		// block
 		writer := make(chan string, 1)
 		go func(writer chan<- string) {
-			time.Sleep(time.Millisecond * 500)
+			time.Sleep(time.Second * 1)
 			writer <- "write message"
 		}(writer)
+		fmt.Println("wait for 1s to write message")
 		<-writer
-		fmt.Println(strings.Repeat("##", 20))
+		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
 		jobs := make(chan int, 5)
@@ -39,19 +42,40 @@ func main() {
 		go func() {
 			for {
 				if j, ok := <-jobs; ok {
-					fmt.Println("goroutine receive data : ", j)
+					fmt.Println("jobs channle opened and receive: ", j)
 
 				} else {
-					fmt.Println("channel was closed")
+					fmt.Println("jobs channle was closed")
 					done <- true
 					return
 				}
 			}
 		}()
 		for j := 1; j <= 3; j++ {
+			time.Sleep(time.Second * 1)
 			jobs <- j
 		}
 		close(jobs)
 		<-done
+
+		fmt.Println(strings.Repeat("##", 30))
+	}
+	{
+		ch := make(chan string, 3)
+
+		for i := 0; i < 20; i++ {
+
+			go func(ch chan string) {
+				ch <- "push"
+
+				fmt.Printf("i = %d goroutine in\n", i)
+				time.Sleep(time.Second * 1)
+
+				<-ch
+				fmt.Printf("i = %d goroutine out\n", i)
+			}(ch)
+
+		}
+		time.Sleep(time.Second * 10)
 	}
 }

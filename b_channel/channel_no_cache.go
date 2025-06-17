@@ -28,7 +28,6 @@ func main() {
 		channel := make(chan string)
 		go func() {
 			for i := 0; i < 5; i++ {
-				fmt.Println("goroutine ", i)
 				time.Sleep(time.Millisecond)
 			}
 			channel <- "goroutine end"
@@ -46,30 +45,34 @@ func main() {
 		}()
 		for {
 			if num, ok := <-noCacheChannel; ok == true {
-				fmt.Println("receive the channel data : ", num)
+				fmt.Println("receive data : ", num)
 			} else {
-				fmt.Println("the channel was closed")
+				fmt.Println("channel was closed")
 				break
 			}
 		}
 		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
-		// sample : goroutine as producer and customer
+		// if the channel is not closed, the goroutine will be blocked to send data
+		// but can still get the data from the channel
 		ch := make(chan int)
+		done := make(chan bool)
 		go func(writer chan<- int) {
 			for i := 0; i < 5; i++ {
-				fmt.Println("goroutine 1 send data : ", i*i)
 				writer <- i * i
 			}
 			close(writer)
 		}(ch)
+
 		go func(reader <-chan int) {
 			for num := range reader {
-				fmt.Println("goroutine 2 receive data :", num)
+				fmt.Println("goroutine 2 receive data:", num)
 			}
+			done <- true
 		}(ch)
 
-		time.Sleep(time.Millisecond)
+		<-done
+		fmt.Println(strings.Repeat("##", 30))
 	}
 }
