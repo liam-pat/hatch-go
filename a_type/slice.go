@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"sort"
 	"strings"
-	"time"
 )
 
-/**
+/*
+*
 arr := [...]int{10,23,44,55,66}
 slice := arr[0:3:5]
 
@@ -20,20 +18,22 @@ eg. [a[low],a[high])
 len：length = high - low
 cap：cap = max - low
 */
-
 func main() {
 	{
+		// initialize a slice
 		var s []string // s = nil
-		fmt.Printf("[]string len = %d, s == nil is  %t \n", len(s) == 0, s == nil)
+		fmt.Printf("`[]string len` len = %d, s == nil is %t, add: %p\n", len(s), s == nil, s)
 
-		s = []string(nil) // do not occupy the ram ... is empty . is nil
-		fmt.Printf("[]string len = %d, s == nil is  %t \n", len(s) == 0, s == nil)
+		s = []string(nil)
+		fmt.Printf("`[]string(nil)` len = %d, s == nil is %t, add: %p\n", len(s), s == nil, s)
 
-		s = []string{} // s = {} , not nil
-		fmt.Printf("[]string len = %d, s == nil is  %t \n", len(s) == 0, s == nil)
+		// note , []string{} and make([]string, 0) the address is the same
+		s = []string{} // s = {}
+		fmt.Printf("`[]string{}` len = %d, s == nil is %t, add: %p\n", len(s), s == nil, s)
 
-		s = make([]string, 0) // s= {} , not nil
-		fmt.Printf("[]string len = %d, s == nil is  %t \n", len(s) == 0, s == nil)
+		s1 := make([]string, 0) // s= {}
+		fmt.Printf("`make([]string, 0)` len = %d, s == nil is %t ,add: %p\n", len(s1), s1 == nil, s1)
+
 		fmt.Println(strings.Repeat("###", 20))
 	}
 	{
@@ -41,118 +41,82 @@ func main() {
 		dst := make([]int, len(src))
 
 		copy(dst, src)
-		fmt.Println(dst)
+		fmt.Println("copy src to dst: ", dst)
 
 		src = []int{4, 5, 6}
 		dst = append([]int(nil), src...)
-		fmt.Println(dst)
+		fmt.Println("append scr to dst", dst)
+
 		fmt.Println(strings.Repeat("###", 20))
 	}
 	{
 		array := [...]int{10, 23, 44, 55, 66}
 
 		slice := array[1:4:5]
-		fmt.Printf("slice : %v len: %d cap: %d\n", slice, len(slice), cap(slice))
+		fmt.Printf("array: %v, array[1:4:5]: %v len: %d cap: %d\n", array, slice, len(slice), cap(slice))
 		//if the cap is not enough , it will create automatically,
 		slice = append(slice, 100)
-		fmt.Println("after appending slice: ", slice)
-		fmt.Println("original array: ", array)
+		fmt.Printf("append `100` to slice: %v len: %d cap: %d\n", slice, len(slice), cap(slice))
 
 		slice2 := slice[1:]
 		slice2[2] = 777
-		fmt.Println("slice2: ", slice2)
-		fmt.Println("slice: ", slice)
+		fmt.Printf("array: %v, slice2: %v, slice: %v\n", array, slice2, slice)
+
 		fmt.Println(strings.Repeat("###", 20))
 	}
 	{
-		array := make([]int, 0, 1) // other way array = []int{}
-		oldCap := cap(array)
+		// auto increament the cap
+		sliceS := make([]int, 0, 1)
+		ordinalCap := cap(sliceS)
+
 		for i := 0; i < 20; i++ {
-			array = append(array, 1)
-			if newCap := cap(array); oldCap < newCap {
-				fmt.Printf("old cap : %d  \t new cap: %d \n", oldCap, newCap)
-				oldCap = newCap
+			sliceS = append(sliceS, i)
+
+			if newCap := cap(sliceS); ordinalCap < newCap {
+				fmt.Printf("original cap : %3d ,new cap: %3d \n", ordinalCap, newCap)
+				ordinalCap = newCap
 			}
 		}
+
 		fmt.Println(strings.Repeat("###", 20))
 	}
 	{
 		scr := []int{1, 2}
 		dst := []int{6, 6, 6, 6, 6, 6}
 		copy(dst, scr)
-		fmt.Println("result: ", slice02)
+		fmt.Printf("scr: %v, dst: %v\n", scr, dst)
+		fmt.Println("copy scr to dst: ", dst)
+
 		fmt.Println(strings.Repeat("###", 20))
 	}
 	{
-		{
-			rand.Seed(time.Now().UnixNano())
-			max := 5
-			var uniques []int
+		arr := [3]int{35, 15, 25}
+		ages := arr[0:3]
 
-		loop2:
-			// you can still use the len function on a nil slice
-			for len(uniques) < max {
-				n := rand.Intn(max) + 1
-				fmt.Print(n, " ")
+		ages[0] = 100
+		ages[2] = 50
 
-				for _, u := range uniques {
-					if u == n {
-						continue loop2
-					}
-				}
+		fmt.Printf("arr type : %T , %[1]v\n", arr[:])
+		fmt.Printf("arr's ages type : %T, %[1]v\n", ages)
 
-				uniques = append(uniques, n)
-			}
+		fmt.Println(strings.Repeat("###", 20))
+	}
+	{
+		evens := []int{2, 4}
+		odds := []int{3, 5, 7}
+		fmt.Printf("evens: %v, odds: %v\n", evens, odds)
 
-			fmt.Println("\n\nuniques:", uniques)
-			fmt.Println("\nlength of uniques:", len(uniques))
+		N := copy(evens, odds)
+		fmt.Printf("copy odds to evens, %d element(s) are copied. result: %v\n", N, evens)
 
-			sort.Ints(uniques)
-			fmt.Println("\nsorted:", uniques)
+		fmt.Println(strings.Repeat("###", 20))
+	}
+	{
+		scr := []int{1, 2, 3, 4, 5}
+		dst := make([]int, 4)
+		fmt.Printf("scr: %v, dst: %v\n", scr, dst)
 
-			// convert to slice to use some function
-			nums := [5]int{5, 4, 3, 2, 1}
-			fmt.Println("\nnums:", nums)
-			fmt.Println("\n num[1:2]:", nums[1:2])
-			fmt.Println("\n num[1:4]:", nums[0:4])
-
-			sort.Ints(nums[:])
-
-			fmt.Println("--------------")
-
-		}
-		{
-			agesArray := [3]int{35, 15, 25}
-			ages := agesArray[0:3]
-
-			ages[0] = 100
-			ages[2] = 50
-
-			fmt.Printf("agesArray type : %T , %[1]v\n", agesArray[:])
-			fmt.Printf("agesArray's ages type : %T, %[1]v\n", ages)
-		}
-		// function
-		{
-			fmt.Println(make([]int, 3, 5))
-			evens := []int{2, 4}
-			odds := []int{3, 5, 7}
-
-			fmt.Println("evens [before]", evens)
-			fmt.Println("odds  [before]", odds)
-
-			N := copy(evens, odds)
-			fmt.Printf("%d element(s) are copied.\n", N)
-
-			fmt.Println("evens [after]", evens)
-			fmt.Println("odds  [after]", odds)
-
-		}
-		{
-			scores := []int{1, 2, 3, 4, 5}
-			cloneScores := make([]int, 4)
-
-			copy(cloneScores, scores[:len(scores)-2])
-			fmt.Println(cloneScores) // [1,2,3, 0]
-		}
+		copy(dst, scr[:len(scr)-2])
+		fmt.Printf("copy `scr[:len(scr)-2]` to dst: %v\n", dst) // [1,2,3, 0]
 	}
 }

@@ -17,43 +17,34 @@ type Student struct {
 func main() {
 	{
 		var student01 Student = Student{1, "author", "male", 23, "GZ"}
-		fmt.Println(strings.Repeat("***", 10))
-		fmt.Println("student01 : ", student01)
-		fmt.Println(strings.Repeat("***", 10))
+		fmt.Println("student01: ", student01)
 
 		student02 := Student{Name: "girlFriend", Age: 27}
-		fmt.Println("student02 : ", student02)
-		fmt.Println(strings.Repeat("***", 10))
+		fmt.Println("student02: ", student02)
 
 		//struct point init
 		var student03 Student
 		var studentPoint *Student
 		studentPoint = &student03
 		studentPoint.Age = 18
-		studentPoint.Name = "test_point"
-		fmt.Println("studentPoint : ", studentPoint)
-		fmt.Println(strings.Repeat("***", 10))
+		studentPoint.Name = "poiter"
+		fmt.Printf("student03: %v , studentPoint: %v\n", student03, studentPoint)
 
 		var student04 = new(Student)
-		student04.Name = "initByNew"
+		student04.Name = "new_student"
 		student04.Age = 50
-		fmt.Println("student04 : ", student04)
-		fmt.Println(strings.Repeat("***", 10))
+		fmt.Println("student04: ", student04)
+		fmt.Println(strings.Repeat("***", 20))
 	}
 	{
-		// json encode . the property need public
 		users := []Student{
 			{1, "name1", "man", 21, "GZ"},
 			{2, "name2", "girl", 22, "SZ"},
-			{3, "name3", "nil", 23, "BJ"},
 		}
-		out, err := json.MarshalIndent(users, "", "\t")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		out, _ := json.MarshalIndent(users, "<<<", "  ")
+		fmt.Printf("output type: %T,json encode: %s\n", out, string(out))
 
-		fmt.Println(string(out))
+		fmt.Println(strings.Repeat("***", 20))
 	}
 	{
 		// json decode
@@ -62,7 +53,7 @@ func main() {
 			Permissions map[string]bool `json:"perms"`
 		}
 		jsonStr := `[
-	{"username": "inanc"},
+	{"username": "lily"},
 	{"username": "god","perms": {"admin": true}},
 	{"username": "devil","perms": {"write": true}}
 ]`
@@ -73,17 +64,15 @@ func main() {
 		}
 
 		for _, user := range users {
-			fmt.Print("+++", user.Name)
-
 			switch p := user.Permissions; {
 			case p == nil:
-				fmt.Print(" has no power.\n")
+				fmt.Printf("%s no permission\n", user.Name)
 			case p["admin"]:
-				fmt.Print(" is an admin.\n")
+				fmt.Printf("%s is an admin\n", user.Name)
 			case p["write"]:
-				fmt.Print(" can write.\n")
+				fmt.Printf("%s is a write\n", user.Name)
 			}
 		}
-
+		fmt.Println(strings.Repeat("***", 20))
 	}
 }
