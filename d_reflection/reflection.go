@@ -25,11 +25,11 @@ type person struct {
 	Age  int
 }
 
-func (p person) Fn01() {
+func (p person) output1() {
 	fmt.Println("this is person 's method one")
 }
 
-func (p person) Fn02(param int) {
+func (p person) output2(param int) {
 	fmt.Println("this is person 's method two , parameter", param)
 }
 
@@ -42,88 +42,89 @@ func main() {
 		var number int = 123
 		var interfaceNum interface{} = number
 
-		fmt.Println("type: ", reflect.TypeOf(interfaceNum))
-		fmt.Println("value: ", reflect.ValueOf(interfaceNum))
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println("interface type: ", reflect.TypeOf(interfaceNum))
+		fmt.Println("interface value: ", reflect.ValueOf(interfaceNum))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
-		var number int64 = 233
+		var number int64 = 512
 
-		reflectObj := reflect.ValueOf(&number)
-		value := reflectObj.Elem()
+		// can change the value of the variable
+		obj := reflect.ValueOf(&number)
+		fmt.Printf("%-30s: %v\n", "reflect.ValueOf(&number)", obj)
+		fmt.Printf("%-30s: %v\n", "obj.Elem()", obj.Elem())
+		fmt.Printf("%-30s: %v\n%-30s: %v\n", "obj.Elem().type", obj.Elem().Type(), "can set?", obj.Elem().CanSet())
+		obj.Elem().SetInt(1024)
+		fmt.Printf("%-30s: %v\n", "obj.Elem().SetInt(1024)", number)
 
-		fmt.Printf("reflect.ValueOf(&number) : %v\n", reflectObj)
-		fmt.Printf("reflectObj.Elem() : %v\n", value)
-		fmt.Printf("type : %v\t can set? %v\t\n", value.Type(), value.CanSet())
+		fmt.Println(strings.Repeat("##", 20))
 
-		value.SetInt(111)
-		fmt.Printf("value.SetInt(111) and number : %v\n", number)
+		// can not change the value of the variable
+		obj2 := reflect.ValueOf(number)
+		fmt.Printf("%-30s: %v\n", "reflect.ValueOf(number)", obj2)
+		fmt.Printf("%-30s: %v\n", "obj2.Int()", obj2.Int())
+		fmt.Printf("%-30s: %v\n", "obj2.Interface().(int64)", obj2.Interface().(int64))
 
-		reflectObj2 := reflect.ValueOf(number)
-		fmt.Println("reflectObj2 get number value", reflectObj2.Int())
-		fmt.Println("reflectObj2 get number value", reflectObj2.Interface().(int64))
-
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		member01 := &member{Name: "lily", Age: 100}
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(member01)", reflect.TypeOf(member01))                 // *main.member
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(*member01)", reflect.TypeOf(*member01))               // main.member
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(*member01).Name()", reflect.TypeOf(*member01).Name()) // member
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(*member01).Kind()", reflect.TypeOf(*member01).Kind()) // struct
 
-		fmt.Println("member reflect type :", reflect.TypeOf(member01))          // *main.member
-		fmt.Println("*member reflect type :", reflect.TypeOf(*member01))        // main.member
-		fmt.Println("*member reflect name :", reflect.TypeOf(*member01).Name()) // member
-		fmt.Println("*member reflect kind :", reflect.TypeOf(*member01).Kind()) // struct
+		fmt.Println(strings.Repeat("##", 20))
 
-		member02 := &member{Name: "cyrus", Age: 20}
+		mem02 := &member{Name: "cyrus", Age: 20}
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(mem02).Elem().Name()", reflect.TypeOf(mem02).Elem().Name()) // member
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(mem02).Elem().Kind()", reflect.TypeOf(mem02).Elem().Kind()) // struct
 
-		typeOfMember := reflect.TypeOf(member02).Elem()
-		fmt.Println("element name: ", typeOfMember.Name()) // member
-		fmt.Println("element kind: ", typeOfMember.Kind()) // struct
-
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		st := student{Name: "Joy", Sex: "male"}
-		var studentInterface interface{} = st
+		var stInterface interface{} = st
 
-		typeOf := reflect.TypeOf(studentInterface)
-		fmt.Println("type of ", typeOf)
+		fmt.Printf("%-40s: %v\n", "reflect.TypeOf(stInterface)", reflect.TypeOf(stInterface))
+		fmt.Printf("%-40s: %v\n", "reflect.ValueOf(stInterface)", reflect.ValueOf(stInterface))
 
-		valueOf := reflect.ValueOf(studentInterface)
-		fmt.Println("value of ", valueOf)
-
+		type1 := reflect.TypeOf(stInterface)
+		value1 := reflect.ValueOf(stInterface)
 		// property
-		for i := 0; i < typeOf.NumField(); i++ {
-			field := typeOf.Field(i)
-			value := valueOf.Field(i).Interface()
-			fmt.Printf("-- field's name: %q, type: %q, value: %q\n", field.Name, field.Type, value)
+		for i := 0; i < type1.NumField(); i++ {
+			field := type1.Field(i)
+			value := value1.Field(i)
+			fmt.Printf("key: %q, type: %q, value: %q\n", field.Name, field.Type, value)
 		}
 		// function
-		for i := 0; i < typeOf.NumMethod(); i++ {
-			m := typeOf.Method(i)
-			fmt.Printf("-- method'name: %q, type: %q\n", m.Name, m.Type)
+		for i := 0; i < type1.NumMethod(); i++ {
+			f := type1.Method(i)
+			fmt.Printf("method name: %q, type: %q\n", f.Name, f.Type)
 		}
 		// check the struct property
-		if userName, ok := typeOf.FieldByName("Name"); ok {
-			fmt.Printf("existing field name : %v\n", userName)
+		if name, ok := type1.FieldByName("Name"); ok {
+			fmt.Printf("find the field name : %v\n", name)
 		}
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		person := &person{Name: "alan", Age: 25}
-		var interfacePerson interface{} = person
 
-		valueOf := reflect.ValueOf(interfacePerson)
+		var psinterface interface{} = person
+		value := reflect.ValueOf(psinterface)
 
-		// get the Fn01 function
-		method1 := valueOf.MethodByName("Fn01")
+		method1 := value.MethodByName("output1")
 		args01 := make([]reflect.Value, 0)
 		method1.Call(args01)
 
-		// get the Fn02 function
-		method2 := valueOf.MethodByName("Fn02")
+		method2 := value.MethodByName("output2")
 		args02 := []reflect.Value{reflect.ValueOf(30)}
 		method2.Call(args02)
-
+		fmt.Println(strings.Repeat("##", 20))
+	}
+	{
+		// call a function via reflection
 		funcValue := reflect.ValueOf(add)
 		params := []reflect.Value{reflect.ValueOf("jerry"), reflect.ValueOf(20)}
 		reList := funcValue.Call(params)

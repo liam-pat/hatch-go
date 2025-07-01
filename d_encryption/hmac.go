@@ -13,10 +13,10 @@ import (
 // Hash-based Message Authentication Code
 func main() {
 
-	fmt.Printf("hamc md5  encode value `%s`=> `%s` \n", "test_01", hmacWithMD5ToStr("test_01", "secret_key"))
-	fmt.Printf("hamc sha1 encode value `%s`=> `%s` \n", "test_01", hmacWithSHA1ToStr("test_01", "secret_key"))
-	fmt.Printf("hamc sha256 encode value `%s`=> `%s` \n", "test_01", hmacWithSHA256ToStr("test_01", "secret_key"))
-	fmt.Printf("hamc sha512 encode value `%s`=> `%s` \n", "test_01", hmacWithSHA512ToStr("test_01", "secret_key"))
+	fmt.Printf("%-20s `%s`=> `%s` \n", "hamc md5 encode", "test_01", hmacWithMD5ToStr("test_01", "secret_key"))
+	fmt.Printf("%-20s `%s`=> `%s` \n", "hamc sha1", "test_01", hmacWithSHA1ToStr("test_01", "secret_key"))
+	fmt.Printf("%-20s `%s`=> `%s` \n", "hamc sha256", "test_01", hmacWithSHA256ToStr("test_01", "secret_key"))
+	fmt.Printf("%-20s `%s`=> `%s` \n", "hamc sha512", "test_01", hmacWithSHA512ToStr("test_01", "secret_key"))
 
 }
 

@@ -7,19 +7,17 @@ import (
 )
 
 func main() {
+	{
+		hash := md5.New()
 
-	fmt.Printf("way 1 md5 : %s \n", md5toStr("test_01"))
-	fmt.Printf("way 2 md5 : %s \n", md5toStr2("test_01"))
-}
+		hash.Write([]byte("test_01"))
 
-func md5toStr(input string) string {
-	hash := md5.New()
-	hash.Write([]byte(input))
+		md5Str := hex.EncodeToString(hash.Sum(nil))
 
-	return hex.EncodeToString(hash.Sum(nil))
+		// second md5
+		str := md5.Sum([]byte(md5Str))
 
-}
-
-func md5toStr2(input string) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(input)))
+		fmt.Printf("encode = %xs\n", md5Str)
+		fmt.Printf("2nd encode = %x\n", str)
+	}
 }

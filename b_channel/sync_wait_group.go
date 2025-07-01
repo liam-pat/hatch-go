@@ -17,16 +17,18 @@ func main() {
 			wg.Add(1)
 			go func(url string) {
 				defer wg.Done()
-				res, err := http.Get(url)
-				fmt.Printf("url %s ,%v , has err %v\n", url, res.Header, err)
+				res, _ := http.Get(url)
+				fmt.Printf("url %s ,%v\n", url, res.Header)
 			}(url)
 		}
-		wg.Wait()
+
+		wg.Wait() // wait the groups
 		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
 		var mt sync.Mutex
 		var wg sync.WaitGroup
+
 		var money = 10000
 
 		for i := 0; i < 10; i++ {
@@ -34,15 +36,20 @@ func main() {
 			go func(index int) {
 				mt.Lock()
 				defer mt.Unlock()
-				fmt.Printf("goroutine %d get lock\n", index)
+
+				fmt.Printf("goroutine %d get the lock\n", index)
+
 				for j := 0; j < 100; j++ {
 					money += 10
 				}
-				fmt.Printf("goroutine %d unlock\n", index)
+				fmt.Printf("goroutine %d unlock, money = %d\n", index, money)
+				fmt.Println(strings.Repeat("##", 20))
+
 				wg.Done()
 			}(i)
 		}
+
 		wg.Wait()
-		fmt.Println("amount :  ", money)
+		fmt.Println("money: ", money)
 	}
 }

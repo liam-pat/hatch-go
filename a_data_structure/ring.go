@@ -17,10 +17,10 @@ import (
 */
 
 func main() {
-	pointNums := 3
-	rings := ring.New(pointNums)
+	const num = 3
+	rings := ring.New(num)
 
-	for i := 0; i < pointNums; i++ {
+	for i := 0; i < num; i++ {
 		rings.Value = i + 10
 		rings = rings.Next()
 	}
@@ -30,6 +30,6 @@ func main() {
 		sum += p.(int)
 	})
 
-	fmt.Println("ring len", rings.Len())
-	fmt.Println("ring point value sum is", sum)
+	fmt.Println("ring len:", rings.Len())
+	fmt.Println("ring sum:", sum)
 }

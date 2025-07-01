@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-
 	str, _ := os.Getwd()
 
 	genRSAKey(1024, str+"/tmp")

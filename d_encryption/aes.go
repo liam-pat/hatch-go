@@ -6,38 +6,36 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"io"
-	"log"
 	"strings"
 )
 
 // (Advanced Encryption Standard)
 // @todo, study 3 method 's different
 func main() {
-
-	str := "hello world!!! I am the AI"
-	// the key length must be 16,24,32
-	key := "123456781234567812345678"
+	str := "hello world !!! I am the AI"
+	key := "123456781234567812345678abcdefgh" // 32 bytes, the key length must be 16,24,32
 
 	encryptedStr, _ := aesCBCEncrypt([]byte(str), []byte(key))
 	decryptedStr, _ := aesCBCDecrypt(encryptedStr, []byte(key))
-	log.Printf("uses CBCEncrypter encrypt `%s` to `%s`\n", str, string(encryptedStr))
-	log.Printf("uses CBCDecrypter decrypt `%s` to `%s`\n", str, decryptedStr)
-	log.Println(strings.Repeat("#", 20))
+	fmt.Printf("CBC encrypt `%s` => `%s`\n", str, string(encryptedStr))
+	fmt.Printf("CBC decrypt `%s` => `%s`\n", string(encryptedStr), decryptedStr)
+	fmt.Println(strings.Repeat("#", 20))
 
 	encryptedStr = aesECBEncrypt([]byte(str), []byte(key))
 	decryptedStr = aesECBDecrypt(encryptedStr, []byte(key))
-	log.Printf("uses ECBEncrypter encrypt `%s` to `%s`\n", str, string(encryptedStr))
-	log.Printf("uses ECBDecrypter decrypt `%s` to `%s`\n", str, decryptedStr)
-	log.Println(strings.Repeat("#", 20))
+	fmt.Printf("ECB encrypt `%s` => `%s`\n", str, string(encryptedStr))
+	fmt.Printf("ECB decrypt `%s` => `%s`\n", string(encryptedStr), decryptedStr)
+	fmt.Println(strings.Repeat("#", 20))
 
 	cfbEncryptedStr := aesCFBEncrypt([]byte(str), []byte(key))
 	cfbEncryptedHexStr := hex.EncodeToString(cfbEncryptedStr)
 	cfbDecryptedStr := aesCFBDecrypt(cfbEncryptedStr, []byte(key))
-	log.Printf("uses CFBEncrypter encrypt `%s` to `%s`\n", str, string(cfbEncryptedStr))
-	log.Printf("uses CFBEncrypter encrypt `%s` to hex string `%s`\n", str, cfbEncryptedHexStr)
-	log.Printf("uses CFBDecrypter decrypt `%s` to `%s`\n", str, cfbDecryptedStr)
-	log.Println(strings.Repeat("#", 20))
+	fmt.Printf("CFB encrypt `%s` => `%s`\n", str, string(cfbEncryptedStr))
+	fmt.Printf("CFB encrypt2hex `%s` => `%s`\n", string(cfbEncryptedStr), cfbEncryptedHexStr)
+	fmt.Printf("CFB decrypt `%s` => `%s`\n", string(cfbEncryptedStr), cfbDecryptedStr)
+	fmt.Println(strings.Repeat("#", 20))
 }
 
 func aesCBCEncrypt(src, key []byte) ([]byte, error) {

@@ -14,13 +14,15 @@ func main() {
 			go func(i int) {
 				rwm.RLock()
 				defer rwm.RUnlock()
+				log.Println("got the read lock,num is", i)
 				time.Sleep(time.Second * 1) // simulate the read file action
-				log.Println("read lock :", i)
 			}(i)
 		}
 
 		time.Sleep(time.Millisecond * 100) // avoid the goroutine is not ready
 		rwm.Lock()
-		log.Println("get the write lock")
+		defer rwm.Unlock()
+
+		log.Println("main process got the write lock")
 	}
 }

@@ -18,10 +18,7 @@ func main() {
 	var once sync.Once
 	var wg sync.WaitGroup
 
-	p := &person{
-		"liam",
-		0,
-	}
+	p := &person{"liam", 0}
 
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
@@ -30,7 +27,6 @@ func main() {
 			wg.Done()
 		}()
 	}
-
 	wg.Wait()
 
 	fmt.Println("age is：", p.Age)

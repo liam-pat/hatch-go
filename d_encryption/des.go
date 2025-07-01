@@ -18,11 +18,12 @@ func main() {
 	src := []byte("test the des cbc encryption")
 	key := []byte("12345678"[:8])
 	iv := []byte("43218765"[:8])
+
 	dst := desCBSEncrypt(src, key, iv)
 	decryptedStr, _ := openssl.DesCBCDecrypt(dst, key, iv, openssl.PKCS5_PADDING)
 
-	log.Printf("`%s` encrypted hex `%v` \n", src, string(dst))
-	log.Printf("`%s` encrypted hex to str `%v` \n", src, hex.EncodeToString(dst))
+	log.Printf("`%s` encrypted `%v` \n", src, string(dst))
+	log.Printf("`%s` encrypted to str `%v` \n", src, hex.EncodeToString(dst))
 	log.Printf("`%s` decrypted `%v` \n", string(dst), string(decryptedStr))
 
 	// 3 times DES CBC , key must be 24 byte
@@ -33,8 +34,8 @@ func main() {
 	decryptedStr, _ = openssl.Des3ECBDecrypt(dst, key, openssl.ZEROS_PADDING)
 
 	log.Printf("`%s` encrypted `%s` \n", src, string(dst))
-	log.Printf("`%s` encrypted hex 2 str `%v` \n", src, hex.EncodeToString(dst))
-	log.Printf("`%s` decrypt 2 str `%v` \n", string(dst), string(decryptedStr))
+	log.Printf("`%s` encrypted 2 hex `%v` \n", src, hex.EncodeToString(dst))
+	log.Printf("`%s` decrypted 2 str `%v` \n", string(dst), string(decryptedStr))
 }
 
 func desCBSEncrypt(src, key, iv []byte) []byte {

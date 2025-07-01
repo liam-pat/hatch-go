@@ -2,32 +2,31 @@ package main
 
 import "fmt"
 
-type Queue []int
+type queue []int
 
-func (q *Queue) Push(value int) {
+func (q *queue) Push(value int) {
 	*q = append(*q, value)
 }
 
-func (q *Queue) Pop() int {
+func (q *queue) Pop() int {
 	head := (*q)[0]
 	*q = (*q)[1:]
 	return head
 }
 
-func (q *Queue) IsEmpty() bool {
+func (q *queue) IsEmpty() bool {
 	return len(*q) == 0
 }
 
 func main() {
-	myQueue := Queue{1}
+	queue := &queue{1}
+	fmt.Printf("empty: %t\n", queue.IsEmpty())
 
-	fmt.Println("is empty: ", myQueue.IsEmpty())
+	queue.Push(10)
+	queue.Push(20)
+	fmt.Println("queue:", queue)
 
-	myQueue.Push(10)
-
-	fmt.Println(myQueue)
-
-	myQueue.Pop()
-	myQueue.Pop()
-	fmt.Println(myQueue.IsEmpty())
+	queue.Pop()
+	queue.Pop()
+	fmt.Println("queue:", queue)
 }

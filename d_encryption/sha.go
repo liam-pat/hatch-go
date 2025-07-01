@@ -9,29 +9,20 @@ import (
 )
 
 func main() {
-	fmt.Printf("sha1   encode value `%s`=> `%s` \n", "test_01", shaToStr("test_01"))
-	fmt.Printf("sha256 encode value `%s`=> `%s` \n", "test_01", sha256ToStr("test_01"))
-	fmt.Printf("sha512 encode value `%s`=> `%s` \n", "test_01", sha512ToStr("test_01"))
-
-}
-
-func shaToStr(input string) string {
+	str := "test_01"
 	hash := sha1.New()
-	hash.Write([]byte(input))
+	hash256 := sha256.New()
+	hash512 := sha512.New()
 
-	return hex.EncodeToString(hash.Sum(nil))
-}
+	hash.Write([]byte(str))
+	hash256.Write([]byte(str))
+	hash512.Write([]byte(str))
 
-func sha256ToStr(input string) string {
-	hash := sha256.New()
-	hash.Write([]byte(input))
+	encodeStr1 := hex.EncodeToString(hash.Sum(nil))
+	encodeStr2 := hex.EncodeToString(hash256.Sum(nil))
+	encodeStr3 := hex.EncodeToString(hash512.Sum(nil))
 
-	return hex.EncodeToString(hash.Sum(nil))
-}
-
-func sha512ToStr(input string) string {
-	hash := sha512.New()
-	hash.Write([]byte(input))
-
-	return hex.EncodeToString(hash.Sum(nil))
+	fmt.Printf("%-10s `%s`=> `%s` \n", "sha1", "test_01", encodeStr1)
+	fmt.Printf("%-10s `%s`=> `%s` \n", "sha256", "test_01", encodeStr2)
+	fmt.Printf("%-10s `%s`=> `%s` \n", "sha512", "test_01", encodeStr3)
 }

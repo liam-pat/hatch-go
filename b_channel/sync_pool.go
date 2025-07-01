@@ -7,7 +7,6 @@ import (
 )
 
 var bytePool = sync.Pool{
-
 	New: func() interface{} {
 		b := make([]byte, 1024)
 		return &b
@@ -17,6 +16,7 @@ var bytePool = sync.Pool{
 func main() {
 
 	time1 := time.Now().Unix()
+
 	obj1 := make([]byte, 1024)
 	for i := 0; i < 100000000; i++ {
 		obj1 = make([]byte, 1024)
@@ -24,13 +24,13 @@ func main() {
 	}
 
 	time2 := time.Now().Unix()
+
 	obj2 := bytePool.Get().(*[]byte)
 	for i := 0; i < 100000000; i++ {
 		obj2 = bytePool.Get().(*[]byte)
 		bytePool.Put(obj2)
 		_ = obj2
 	}
-
 	time3 := time.Now().Unix()
 
 	fmt.Println("without pool: ", time2-time1, "s") // 16s

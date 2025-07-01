@@ -10,16 +10,19 @@ func main() {
 	{
 		c1 := make(chan string, 1)
 		c2 := make(chan string, 1)
+
 		go func() {
 			time.Sleep(2 * time.Second)
 			c1 <- "result 1"
 		}()
+
 		select {
 		case res := <-c1:
 			fmt.Println(res)
 		case <-time.After(1 * time.Second):
 			fmt.Println("timeout 1")
 		}
+
 		go func() {
 			time.Sleep(2 * time.Second)
 			c2 <- "result 2"
@@ -31,7 +34,7 @@ func main() {
 			fmt.Println("timeout 2")
 		}
 
-		fmt.Println(strings.Repeat("*#", 30))
+		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
 		ch := make(chan int)
@@ -41,19 +44,22 @@ func main() {
 			for {
 				select {
 				case num := <-ch:
-					fmt.Println("num = ", num)
+					fmt.Println("num is", num)
 				case <-time.After(5 * time.Second):
-					fmt.Println("overtime , 5 second after")
+					fmt.Println("5s cannot receive the data, exit,timeout")
 					quit <- true
 				}
 			}
 		}()
-		for i := 0; i < 8; i++ {
-			ch <- i
-			time.Sleep(time.Second)
-		}
+		go func() {
+			for i := 0; i < 10; i++ {
+				ch <- i
+				time.Sleep(1 * time.Second)
+			}
+		}()
+
 		<-quit
-		fmt.Println(strings.Repeat("*#", 30))
+		fmt.Println(strings.Repeat("##", 30))
 	}
 	{
 		// 3 ways to wait

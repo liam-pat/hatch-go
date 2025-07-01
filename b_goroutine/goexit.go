@@ -4,37 +4,40 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
-	"time"
 )
 
 func main() {
 	{
+		wait := make(chan bool, 1)
 		go func() {
-			fmt.Println("goroutine A")
 			func() {
-				defer fmt.Println("goroutine defer C")
-				runtime.Goexit() // exit immediately
-				fmt.Println("goroutine D")
+				defer func() {
+					wait <- true
+				}()
+				fmt.Println("exit immediately")
+				runtime.Goexit()
 			}()
-
-			fmt.Println("goroutine B")
 		}()
 
-		time.Sleep(time.Millisecond)
+		<-wait
 		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
-		for i := 1; i <= 5; i++ {
-			defer fmt.Println("defer ", i)
+		const NUM = 5
+		wait := make(chan bool, NUM)
 
+		for i := 1; i <= NUM; i++ {
 			go func(i int) {
+				defer func() { wait <- true }()
 				if i == 3 {
 					runtime.Goexit()
 				}
-				fmt.Println(i)
+				fmt.Println("goroutine number", i)
 			}(i)
 		}
-		time.Sleep(time.Second)
+		for i := 0; i < NUM; i++ {
+			<-wait
+		}
 		fmt.Println(strings.Repeat("##", 20))
 	}
 }

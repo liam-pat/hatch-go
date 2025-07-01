@@ -9,7 +9,9 @@ import (
 func main() {
 	{
 		// ticker, retry the failed task
-		ticker := time.NewTicker(1 * time.Millisecond * 200)
+		ticker := time.NewTicker(time.Millisecond * 200)
+		defer ticker.Stop()
+
 		i := 0
 		for {
 			<-ticker.C
@@ -27,13 +29,14 @@ func main() {
 		ticker := time.NewTicker(time.Millisecond * 500)
 		defer ticker.Stop()
 
-		stopper := time.NewTimer(time.Second * 2)
+		timer := time.NewTimer(time.Second * 3)
+		defer timer.Stop()
 
 		var i int
 		for {
 			select {
-			case <-stopper.C:
-				fmt.Println("timer")
+			case <-timer.C:
+				fmt.Println("3s la ~")
 				return
 			case <-ticker.C:
 				i++
