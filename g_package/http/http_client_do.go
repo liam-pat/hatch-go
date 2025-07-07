@@ -20,8 +20,8 @@ func main() {
 		}
 		response, _ := client.Do(request)
 		defer response.Body.Close()
-		responseString, _ := httputil.DumpResponse(response, true)
 
+		responseString, _ := httputil.DumpResponse(response, true)
 		fmt.Printf("%s\n", responseString)
 	}
 }

@@ -13,6 +13,7 @@ func main() {
 			return
 		}
 	})
+	// if the second parameter is nil, the default http.DefaultServeMux will be used, http.DefaultServeMux.HandleFunc("/", myHandler)
 	if err := http.ListenAndServe(":8000", nil); err != nil {
 		log.Println("err: ", err)
 		return

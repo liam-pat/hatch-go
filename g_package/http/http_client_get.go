@@ -7,15 +7,14 @@ import (
 )
 
 func main() {
-	res, _ := http.Get("http://127.0.0.1:8000")
+	res, _ := http.Get("https://www.baidu.com")
 
 	defer func(Body io.ReadCloser) { Body.Close() }(res.Body)
 
-	fmt.Printf("status = %v \n header = %v \n statusCode = %v \n", res.Status, res.Header, res.StatusCode)
+	fmt.Printf("status = %v \nheader = %v \nstatusCode = %v \n", res.Status, res.Header, res.StatusCode)
 
-	buf := make([]byte, 1024)
+	buf := make([]byte, 2048)
 	var contentStr string
-
 	for {
 		n, _ := res.Body.Read(buf)
 		if n == 0 {
@@ -23,6 +22,5 @@ func main() {
 		}
 		contentStr += string(buf[:n])
 	}
-
 	fmt.Println("body = ", contentStr)
 }
