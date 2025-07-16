@@ -12,30 +12,25 @@ func main() {
 	// go run
 	fooCmd := flag.NewFlagSet("foo", flag.ExitOnError)
 	fooEnable := fooCmd.Bool("enable", false, "enable")
-	fooName := fooCmd.String("name", "", "name")
+	fooName := fooCmd.String("name", "null", "name")
 
 	barCmd := flag.NewFlagSet("bar", flag.ExitOnError)
 	barLevel := barCmd.Int("level", 0, "level")
 
 	if len(os.Args) < 2 {
-		fmt.Println("expected 'foo' or 'bar' subcommands")
+		fmt.Println("unexpected subcmd")
 		os.Exit(1)
 	}
 	switch os.Args[1] {
 
 	case "foo":
 		fooCmd.Parse(os.Args[2:])
-		fmt.Println("subcommand 'foo'")
-		fmt.Println("  enable:", *fooEnable)
-		fmt.Println("  name:", *fooName)
-		fmt.Println("  tail:", fooCmd.Args())
+		fmt.Printf("subcmd : %s , enable: %t , name: %s\n", os.Args[1], *fooEnable, *fooName)
 	case "bar":
 		barCmd.Parse(os.Args[2:])
-		fmt.Println("subcommand 'bar'")
-		fmt.Println("  level:", *barLevel)
-		fmt.Println("  tail:", barCmd.Args())
+		fmt.Printf("subcmd : %s , level: %d\n", os.Args[1], *barLevel)
 	default:
-		fmt.Println("expected 'foo' or 'bar' subcommands")
+		fmt.Println("unexpected subcmd")
 		os.Exit(1)
 	}
 }

@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
-var m *sync.RWMutex
-var val = 0
+var (
+	m   *sync.RWMutex
+	val = 0
+)
 
 func main() {
 	m = new(sync.RWMutex)
@@ -21,14 +23,14 @@ func main() {
 func read() {
 	m.RLock()
 	time.Sleep(1 * time.Second)
-	println("val: ", val)
+	println("read: ", val)
 	time.Sleep(1 * time.Second)
 	m.RUnlock()
 }
 
 func write(i int) {
 	m.Lock()
-	val = i
+	val = 1
 	time.Sleep(1 * time.Second)
 	m.Unlock()
 }

@@ -9,14 +9,10 @@ import (
 func main() {
 	var once sync.Once
 
-	onceBody := func() {
-		fmt.Println("exec this func")
-	}
+	oncefun := func() { fmt.Println("exec this func") }
 
 	for i := 0; i < 10; i++ {
-		go func() {
-			once.Do(onceBody)
-		}()
+		go func() { once.Do(oncefun) }()
 	}
 
 	time.Sleep(1 * time.Second)

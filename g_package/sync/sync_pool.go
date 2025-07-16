@@ -18,7 +18,7 @@ func main() {
 	obj1 := make([]byte, 1024)
 	for i := 0; i < 50000000; i++ {
 		obj1 = make([]byte, 1024)
-		_ = obj1
+		_ = obj1 // tell gc we will use it, dun release it
 	}
 
 	time2 := time.Now().Unix()
@@ -28,7 +28,6 @@ func main() {
 		BytePool.Put(obj2)
 		_ = obj2
 	}
-
 	time3 := time.Now().Unix()
 
 	fmt.Println("without pool: ", time2-time1, "s") // 16s

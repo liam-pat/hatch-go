@@ -7,36 +7,22 @@ import (
 	"sync"
 )
 
-type Person struct {
-	Name string
-	Age  int
-}
-
-func (p *Person) Grown() {
-	p.Age += 1
-}
-
 func main() {
 	{
 		var waitGroup sync.WaitGroup
-
-		var urls = []string{
-			"https://www.baidu.com/",
-			"https://www.163.com/",
-			"https://www.weibo.com/",
-		}
+		var urls = []string{"https://www.baidu.com", "https://www.163.com", "https://www.weibo.com"}
 
 		for _, url := range urls {
 			waitGroup.Add(1)
 			go func(url string) {
 				defer waitGroup.Done()
 				_, err := http.Get(url)
-				fmt.Println("http get", url, err)
+				fmt.Println("request: ", url, err)
 			}(url)
 		}
 
 		waitGroup.Wait()
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		var mutex sync.Mutex
@@ -47,9 +33,9 @@ func main() {
 			waitGroup.Add(1)
 			go func(index int) {
 				mutex.Lock()
-				fmt.Printf("%d get lock\n", index)
+				fmt.Printf("%d got lock\n", index)
 				for j := 0; j < 100; j++ {
-					money += 10 //  多个协程对 money 产生了竞争
+					money += 10 //  race condition
 				}
 				mutex.Unlock()
 				waitGroup.Done()
@@ -58,25 +44,24 @@ func main() {
 		waitGroup.Wait()
 
 		fmt.Println("money = ", money)
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		var once sync.Once
 		var waitGroup sync.WaitGroup
 
-		p := &Person{"bone", 0}
+		p := 0
 
 		for i := 0; i < 5; i++ {
 			waitGroup.Add(1)
 			go func() {
-				once.Do(func() { p.Grown() })
+				once.Do(func() { p += 1 })
 				waitGroup.Done()
 			}()
 		}
 		waitGroup.Wait()
 
-		fmt.Println("age ：", p.Age)
-		fmt.Println(strings.Repeat("#*", 20))
+		fmt.Println("age ：", p)
+		fmt.Println(strings.Repeat("##", 20))
 	}
-
 }

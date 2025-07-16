@@ -9,32 +9,24 @@ import (
 func main() {
 	{
 		timer := time.NewTimer(time.Second * 1)
-		ch := time.After(time.Second * 3)
+		ch := time.After(time.Second * 2)
 
-		go func() {
-			<-timer.C
-			fmt.Println("1s later")
-		}()
-		go func() {
-			<-ch
-			fmt.Println("3s later")
-		}()
-		time.Sleep(time.Second * 5)
+		go func() { <-timer.C }()
+		go func() { <-ch }()
 
+		time.Sleep(time.Second * 3)
 		fmt.Println(strings.Repeat("###", 30))
 	}
 	{
-		timer := time.NewTimer(2 * time.Second)
+		timer := time.NewTimer(1 * time.Second)
 		fmt.Println("start time: ", time.Now().Format("2006-01-02 15:04:05"))
 
 		go func() {
 			times := 1
 			for {
 				<-timer.C
-				fmt.Printf("--reset time %d, %s will reset 2s\n", times, time.Now().Format("2006-01-02 15:04:05"))
-				timer.Reset(2 * time.Second)
+				timer.Reset(1 * time.Second)
 				if (times) > 3 {
-					fmt.Println("reset time > 3, stop")
 					timer.Stop()
 				}
 				times++
@@ -66,7 +58,7 @@ func main() {
 		}()
 		select {
 		case done <- 1:
-			fmt.Println("sth need to do...")
+			fmt.Println("gorounting done...")
 		case <-time.After(2 * time.Second):
 			close(done)
 			fmt.Println("timeout...")

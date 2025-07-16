@@ -10,13 +10,14 @@ func main() {
 		input                  = "56.12 / 5212 / Go"
 		format                 = "%f / %d / %s"
 	)
-	fmt.Println("Please enter your full name: ")
-	// explode ' ' input value to parameter
-	fmt.Scanln(&firstName, &lastName)
+	fmt.Println("plz input first name: ")
+	fmt.Scanln(&firstName)
 
-	// fmt.Scanf("%s %s", &firstName, &lastName)
+	fmt.Println("plz input last name: ")
+	fmt.Scanln(&lastName)
+
 	fmt.Printf("Hi %q %q!\n", firstName, lastName)
 
 	fmt.Sscanf(input, format, &f, &i, &s)
-	fmt.Println("From the string we read: ", f, i, s)
+	fmt.Println("read: ", f, i, s)
 }

@@ -2,29 +2,26 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func main() {
 	{
-		// output timestamp
-		nowTime := time.Now()
-		fmt.Println("time.Now() : ", nowTime)
-		fmt.Println("time location : ", nowTime.Location())
-		fmt.Println("Unix : ", nowTime.Unix())
-		fmt.Println("UnixMilli : ", nowTime.UnixMilli())
-		fmt.Println("UnixNano : ", nowTime.UnixNano())
+		time := time.Now()
+		fmt.Println("time.Now(): ", time)
+		fmt.Println("time location: ", time.Location())
+		fmt.Printf("%-15s: %-20d  len: %d\n", "Unix", time.Unix(), len(strconv.FormatInt(time.Unix(), 10)))
+		fmt.Printf("%-15s: %-20d  len: %d\n", "UnixMilli", time.UnixMilli(), len(strconv.FormatInt(time.UnixMilli(), 10)))
+		fmt.Printf("%-15s: %-20d  len: %d\n", "UnixMicro", time.UnixMicro(), len(strconv.FormatInt(time.UnixMicro(), 10)))
+		fmt.Printf("%-15s: %-20d  len: %d\n", "UnixNano", time.UnixNano(), len(strconv.FormatInt(time.UnixNano(), 10)))
 		fmt.Println(strings.Repeat("###", 30))
 	}
 	{
 		// init date
-		fmt.Println("time.Date : ", time.Date(2008, 7, 15, 13, 30, 0, 0, time.Local))
-		fmt.Println(strings.Repeat("###", 30))
-	}
-	{
-		// output format
-		fmt.Println("time.Now().Format : ", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Println("time.Date: ", time.Date(2008, 7, 15, 13, 30, 0, 0, time.Local))
+		fmt.Println("time.Now().Format: ", time.Now().Format("2006-01-02 15:04:05"))
 		fmt.Println(strings.Repeat("###", 30))
 	}
 	{

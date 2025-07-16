@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"strings"
 	"sync"
 	"time"
@@ -47,39 +46,76 @@ func consumer(ch <-chan int) {
 		cond.Signal()
 	}
 }
+
 func main() {
+	{
+		locker := new(sync.Mutex)
+		cond := sync.NewCond(locker)
+
+		done := false
+		cond.L.Lock()
+
+		go func() {
+			time.Sleep(2e9)
+			done = true
+			cond.Signal()
+		}()
+
+		if !done {
+			cond.Wait()
+			fmt.Println("wait the go routine done")
+		}
+
+		fmt.Println("go routine is done : ", done)
+		fmt.Println(strings.Repeat("##", 30))
+	}
+	{
+		var locker = new(sync.Mutex)
+		var cond = sync.NewCond(locker)
+
+		for i := 0; i < 5; i++ {
+			go func(x int) {
+				cond.L.Lock()
+				cond.Wait()
+				fmt.Printf("no %d gorountine resumed \n", x)
+				cond.L.Unlock()
+			}(i)
+		}
+
+		time.Sleep(2 * time.Second)
+		fmt.Println("main process broadcast all")
+		cond.Broadcast()
+		time.Sleep(2 * time.Second)
+	}
 	{
 		cond := sync.NewCond(&sync.Mutex{})
 		condition := false
 
 		go func() {
 			time.Sleep(time.Second * 1)
+
 			cond.L.Lock()
-
 			condition = true
-			cond.Signal() // send signal
 
+			cond.Signal() // send signal
 			cond.L.Unlock()
 		}()
 
 		cond.L.Lock()
 		for !condition {
-			cond.Wait() //will unlock . get the signal will lock again
-			fmt.Println("get the signal")
+			cond.Wait()
+			fmt.Println("wait the go routine signal")
 		}
 		cond.L.Unlock()
-		fmt.Println(strings.Repeat("*#", 20))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
 		ch := make(chan int, BUFFER)
-
 		for i := 0; i < 5; i++ {
-			fmt.Printf("start to create %d producer goruntine \n", i)
 			go producer(ch)
 		}
 
 		for i := 0; i < 5; i++ {
-			fmt.Printf("start to create %d consumer goruntine \n", i)
 			go consumer(ch)
 		}
 

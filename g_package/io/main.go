@@ -5,9 +5,9 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -34,63 +34,85 @@ type Book struct {
 
 func main() {
 	{
-		// parse the cmd args
-		var inputStr string
-		if len(os.Args) > 1 {
-			inputStr += strings.Join(os.Args[1:], " ")
-		}
-		fmt.Println(inputStr)
+		// write
+		file, _ := os.Create("/tmp" + "/test.txt")
+		defer file.Close()
+
+		f, _ := os.OpenFile("/tmp"+"/test.txt", os.O_APPEND|os.O_RDWR, os.ModeAppend)
+		defer f.Close()
+
+		_, _ = f.Write([]byte("hello (by []byte)\n"))
+		fileInfo, _ := os.Stat("/tmp" + "/test.txt")
+		fmt.Printf("name : %s \nmode : %s,\nsize : %d B \n", fileInfo.Name(), fileInfo.Mode(), fileInfo.Size())
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
-		//  path package
+		absPath, _ := filepath.Abs("/tmp" + "/test.txt")
+		f, _ := os.Open(absPath)
+		defer f.Close()
 
+		readByte := make([]byte, 128)
+		for {
+			n, _ := f.Read(readByte)
+			fmt.Println(string(readByte[:n]))
+			if n < 128 {
+				fmt.Println("read end")
+				break
+			}
+		}
+		_ = os.Remove(absPath)
+	}
+	{
+		var inputStr string
+		if len(os.Args) > 1 {
+			inputStr += strings.Join(os.Args[1:], ",")
+		}
+		fmt.Println("cmd args: ", inputStr)
+	}
+	{
 		sourceFilepath := dir + "/source.txt"
 
 		fmt.Println("dir : ", path.Dir(sourceFilepath))
 		fmt.Println("file name : ", path.Base(sourceFilepath))
 		fmt.Println("file ext : ", path.Ext(sourceFilepath))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 
 	{
-		// copy the file
-		sourceFilepath := dir + "/source.txt"
-		dstFilepath := dir + "/copy.txt"
+		srcFile := dir + "/source.txt"
+		dstFile := dir + "/copy.txt"
 
-		src, _ := os.Open(sourceFilepath)
+		src, _ := os.Open(srcFile)
 		defer src.Close()
 
-		dst, _ := os.Create(dstFilepath)
+		dst, _ := os.Create(dstFile)
 		defer dst.Close()
 
 		io.Copy(dst, src)
-		fmt.Println(strings.Repeat("*#", 10))
+		fmt.Println(strings.Repeat("##", 20))
 	}
 	{
-		// read to buffer
-		file, _ := os.Open(dir + "/data.json")
+		file, _ := os.Open(dir + "/source.txt")
+		defer file.Close()
 
-		buf := make([]byte, 1024) // 1kb a times
+		buf := make([]byte, 1024)
 		var content string
-
-		inputReader := bufio.NewReader(file)
+		read := bufio.NewReader(file)
 
 		for {
-			n, _ := inputReader.Read(buf)
-			if n == 0 {
+			if n, _ := read.Read(buf); n == 0 {
 				break
 			}
-			content += string(buf[:n])
+			content += string(buf[:])
 		}
-
 		fmt.Println(content)
-		fmt.Println(strings.Repeat("*#", 10))
+		fmt.Println(strings.Repeat("##", 10))
 	}
 	{
-		// read csv
-		books := make([]Book, 1)
 		file, _ := os.Open(dir + "/book.csv")
 		defer file.Close()
 
+		books := make([]Book, 1)
 		reader := bufio.NewReader(file)
 
 		for {
@@ -100,13 +122,12 @@ func main() {
 			}
 			// remove \r and \n so 2(in Windows, in Linux only \n, so 1):
 			line = string(line[:len(line)-1])
+			strSlice := strings.Split(line, ";")
 
-			strSl := strings.Split(line, ";")
-			book := new(Book)
+			price, _ := strconv.ParseFloat(strSlice[1], 32)
+			quantity, _ := strconv.Atoi(strSlice[2])
 
-			book.title = strSl[0]
-			book.price, _ = strconv.ParseFloat(strSl[1], 32)
-			book.quantity, _ = strconv.Atoi(strSl[2])
+			book := &Book{strSlice[0], price, quantity}
 
 			if books[0].title == "" {
 				books[0] = *book
@@ -115,7 +136,7 @@ func main() {
 			}
 		}
 		fmt.Println(books)
-		fmt.Println(strings.Repeat("*#", 10))
+		fmt.Println(strings.Repeat("##", 10))
 	}
 	{
 		// read col
@@ -135,42 +156,39 @@ func main() {
 		}
 
 		fmt.Println(col1, col2, col3)
-		fmt.Println(strings.Repeat("*#", 10))
+		fmt.Println(strings.Repeat("##", 10))
 	}
 	{
 		// read file one by one
 		file, _ := os.Open(dir + "/book.csv")
 		defer file.Close()
 
-		inputReader := bufio.NewReader(file)
+		reader := bufio.NewReader(file)
 		for {
-			readString, readerError := inputReader.ReadString('\n')
-			if readerError == io.EOF {
+			str, err := reader.ReadString('\n')
+			if err == io.EOF {
 				break
 			}
-			fmt.Printf("The input is: %s\n", readString)
+			fmt.Printf("The input is: %s", str)
 		}
-		fmt.Println(strings.Repeat("*#", 10))
+		fmt.Println(strings.Repeat("##", 10))
 	}
 	{
-		// read content one time
-		inputFile := dir + "/data.json"
-
-		buf, _ := ioutil.ReadFile(inputFile)
-		fmt.Printf("%s\n", string(buf))
-		fmt.Println(strings.Repeat("*#", 10))
+		file := dir + "/data.json"
+		buf, _ := os.ReadFile(file)
+		fmt.Println("%s", string(buf))
+		fmt.Println(strings.Repeat("##", 10))
 	}
 	{
 		// read zip . support bzip2、gzip、lzw 、 zlib。
-		fName := dir + "/encode.gz"
+		file := dir + "/encode.gz"
+		filep, _ := os.Open(file)
+		defer filep.Close()
+
 		var r *bufio.Reader
-
-		file, _ := os.Open(fName)
-		defer file.Close()
-
-		zip, err := gzip.NewReader(file)
+		zip, err := gzip.NewReader(filep)
 		if err != nil {
-			r = bufio.NewReader(file)
+			r = bufio.NewReader(filep)
 		} else {
 			r = bufio.NewReader(zip)
 		}

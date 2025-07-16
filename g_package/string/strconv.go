@@ -35,5 +35,4 @@ func main() {
 		fmt.Println(strconv.Atoi("1023"))
 		fmt.Println(strings.Repeat("#*", 20))
 	}
-
 }
