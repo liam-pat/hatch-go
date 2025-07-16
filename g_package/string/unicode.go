@@ -9,23 +9,18 @@ import (
 func main() {
 	{
 		// quote by '' , it would be the unicode/rune string
-		single := '\u0015'
-		fmt.Println(unicode.IsControl(single))
-		single = '\ufe35'
-		fmt.Println(unicode.IsControl(single))
+		fmt.Printf("%-50s = %t\n", "unicode.IsControl('\\u0015')", unicode.IsControl('\u0015'))
+		fmt.Printf("%-50s = %t\n", "unicode.IsControl('\\ufe35')", unicode.IsControl('\ufe35'))
 
-		digit := '1'
-		fmt.Println(unicode.IsDigit(digit))
-		fmt.Println(unicode.IsNumber(digit))
+		fmt.Printf("%-50s = %t\n", "unicode.IsDigit('1')", unicode.IsDigit('1'))
+		fmt.Printf("%-50s = %t\n", "unicode.IsNumber('1')", unicode.IsNumber('1'))
 
-		letter := 'Ⅷ'
-		fmt.Println(unicode.IsDigit(letter))
-		fmt.Println(unicode.IsNumber(letter))
+		fmt.Printf("%-50s = %t\n", "unicode.IsDigit('Ⅷ')", unicode.IsDigit('Ⅷ'))
+		fmt.Printf("%-50s = %t\n", "unicode.IsNumber('Ⅷ')", unicode.IsNumber('Ⅷ'))
 
-		han := '你'
-		fmt.Println(unicode.IsDigit(han))
-		fmt.Println(unicode.Is(unicode.Han, han))
-		fmt.Println(unicode.In(han, unicode.Gujarati, unicode.White_Space))
+		fmt.Printf("%-50s = %t\n", "unicode.IsDigit('你')", unicode.IsDigit('你'))
+		fmt.Printf("%-50s = %t\n", "unicode.Is(unicode.Han, '你')", unicode.Is(unicode.Han, '你'))
+		fmt.Printf("%-50s = %t\n", "unicode.In('你', unicode.Gujarati, unicode.White_Space)", unicode.In('你', unicode.Gujarati, unicode.White_Space))
 		fmt.Println(strings.Repeat("##", 10))
 	}
 }

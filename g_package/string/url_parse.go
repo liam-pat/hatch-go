@@ -7,27 +7,24 @@ import (
 )
 
 func main() {
-	s := "postgres://user:pass@host.com:5432/path?k=v#f"
+	urlinfo, _ := url.Parse("postgres://packie:1232323@host.com:5432/path?k=v#f")
 
-	u, _ := url.Parse(s)
+	fmt.Printf("%-30s = %s\n", "urlinfo.Scheme", urlinfo.Scheme)
+	fmt.Printf("%-30s = %s\n", "urlinfo.User", urlinfo.User)
+	fmt.Printf("%-30s = %s\n", "urlinfo.User.Username()", urlinfo.User.Username())
+	fmt.Printf("%-30s = %s\n", "urlinfo.Host", urlinfo.Host)
+	fmt.Printf("%-30s = %s\n", "urlinfo.Path", urlinfo.Path)
+	fmt.Printf("%-30s = %s\n", "urlinfo.Fragment", urlinfo.Fragment)
+	fmt.Printf("%-30s = %s\n", "urlinfo.RawQuery", urlinfo.RawQuery)
 
-	fmt.Println(u.Scheme)
+	p, _ := urlinfo.User.Password()
+	fmt.Printf("%-30s = %s\n", "urlinfo.User.Password()", p)
 
-	fmt.Println(u.User)
-	fmt.Println(u.User.Username())
-	p, _ := u.User.Password()
-	fmt.Println(p)
+	host, port, _ := net.SplitHostPort(urlinfo.Host)
+	fmt.Printf("%-30s = %s\n", "host", host)
+	fmt.Printf("%-30s = %s\n", "port", port)
 
-	fmt.Println(u.Host)
-	host, port, _ := net.SplitHostPort(u.Host)
-	fmt.Println(host)
-	fmt.Println(port)
-
-	fmt.Println(u.Path)
-	fmt.Println(u.Fragment)
-
-	fmt.Println(u.RawQuery)
-	m, _ := url.ParseQuery(u.RawQuery)
-	fmt.Println(m)
-	fmt.Println(m["k"][0])
+	m, _ := url.ParseQuery(urlinfo.RawQuery)
+	fmt.Printf("%-30s = %s\n", "m", m)
+	fmt.Printf("%-30s = %s\n", "m[\"k\"][0]", m["k"][0])
 }
