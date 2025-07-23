@@ -37,11 +37,12 @@ func HandleCon(con net.Conn) {
 
 func main() {
 	listener, err := net.Listen("tcp", "127.0.0.1:8001")
+	defer listener.Close()
+
 	if err != nil {
 		fmt.Println("err =", err)
 		return
 	}
-	defer listener.Close()
 
 	for {
 		con, err1 := listener.Accept()
