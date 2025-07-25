@@ -1,30 +1,21 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
-	ch := make(chan int)
-	quit := make(chan bool)
+	result := 0
+	for i := 0; i <= 10; i++ {
+		result = fibonacci(i)
+		fmt.Printf("fibonacci(%d) = %d\n", i, result)
+	}
+}
 
-	go func() {
-		for i := 0; i < 20; i++ {
-			number := <-ch
-			fmt.Println(number)
-		}
-		quit <- true
-	}()
-
-	func(ch chan<- int, quit <-chan bool) {
-		x, y := 1, 1
-		for {
-			select {
-			case ch <- x:
-				x, y = y, x+y
-			case <-quit:
-				return
-			}
-		}
-	}(ch, quit)
+func fibonacci(n int) int {
+	if n == 0 {
+		return 0
+	} else if n == 1 {
+		return 1
+	} else {
+		return fibonacci(n-1) + fibonacci(n-2)
+	}
 }

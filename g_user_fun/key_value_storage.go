@@ -69,7 +69,6 @@ func PRINT() {
 }
 
 func main() {
-	fmt.Println("Please input the CMD.eg ADD newKey 1 test")
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		text := scanner.Text()
@@ -77,7 +76,6 @@ func main() {
 		strKeys := strings.Fields(text)
 
 		switch len(strKeys) {
-		// nothing , ask to input again
 		case 0:
 			continue
 		case 1:
@@ -90,7 +88,6 @@ func main() {
 		case 3:
 			strKeys = append(strKeys, "default-name")
 		}
-
 		switch strKeys[0] {
 		case "PRINT":
 			PRINT()

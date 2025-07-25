@@ -14,6 +14,5 @@ func isIP(ip string) (b bool) {
 
 func main() {
 	str := "192.168.55.1"
-
-	fmt.Printf("is ip : %v \n", isIP(str))
+	fmt.Printf("`%s` is ip: %t \n", str, isIP(str))
 }

@@ -11,13 +11,14 @@ func main() {
 	args := os.Args[1:]
 
 	if len(args) == 0 {
-		log.Fatal("plz, input a dir name")
+		log.Fatal("plz input the file name!!!")
 	}
+
 	files, err := os.ReadDir(args[0])
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
+
 	var filename []byte
 	for _, file := range files {
 		name := file.Name()
@@ -25,9 +26,7 @@ func main() {
 		filename = append(filename, '\n')
 		fmt.Println(name)
 	}
-	err = os.WriteFile(fmt.Sprintf("../tmp/tmp_%d.txt", time.Now().Unix()), filename, 0644)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
+	file := fmt.Sprintf("/tmp/tmp_%d.txt", time.Now().Unix())
+	os.WriteFile(file, filename, 0664)
 }

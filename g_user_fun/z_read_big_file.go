@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func ProcessChunk(chunk []byte, linesPool *sync.Pool, stringPool *sync.Pool, slicePool *sync.Pool, start time.Time, end time.Time) {
+func Chuck(chunk []byte, linesPool *sync.Pool, stringPool *sync.Pool, slicePool *sync.Pool, start time.Time, end time.Time) {
 	//another wait group to process every chunk
 	var waitGroup sync.WaitGroup
 	logs := stringPool.Get().(string)
@@ -108,7 +108,7 @@ func main() {
 			start := time.Now()
 			end := start.Add(during)
 
-			ProcessChunk(buf, &linesPool, &stringPool, &slicePool, start, end)
+			Chuck(buf, &linesPool, &stringPool, &slicePool, start, end)
 			waitGroup.Done()
 		}()
 	}
